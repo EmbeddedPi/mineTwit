@@ -19,6 +19,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
+/*
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
@@ -27,14 +28,15 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+*/
 
 public class Main {
 
-  private static final String LIGHTS_ON_MSG = "The lights are off";
-  private static final String LIGHTS_OFF_MSG = "The lights are on";
+  private static final String LIGHTS_ON_MSG = "Jeannie smells a bit funny";
+  private static final String LIGHTS_OFF_MSG = "Jeannie has no nose, how does she smell?";
   private static final boolean TWITTER_CONFIGURED = false;
-  private static final String APP_SECRET = "XXXX";
-  private static final String APP_KEY = "YYYY";
+  private static final String API_KEY = "XXXX";
+  private static final String API_SECRET = "YYYY";
   private static final String token = "ZZZ";
   private static final String secret = "ABABAB";
 
@@ -53,13 +55,19 @@ public class Main {
   public static void main(String[] args) throws Exception {
     System.out.println("Starting the photosensor demo...");
     twitter = setupTwitter();
+/*    
     final GpioController gpio = GpioFactory.getInstance();
     final GpioPinDigitalOutput led = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06);
     final GpioPinDigitalInput sensor = gpio.provisionDigitalInputPin(RaspiPin.GPIO_01, PinPullResistance.PULL_DOWN);
     configureSenssor(led, sensor);
+ */
+    System.out.println("Current status is ..." + currentStatus);
+    updateStatus(twitter, LightStatus.ON);
+    System.out.println("All done.....");
     sleep();
   }
 
+/*
   private static void configureSenssor(final GpioPinDigitalOutput led, final GpioPinDigitalInput sensor) {
     sensor.addListener(new GpioPinListenerDigital() {
       @Override
@@ -84,9 +92,13 @@ public class Main {
         led.high();
         updateStatus(twitter, LightStatus.OFF);
       }
-    });
-  }
 
+ }
+
+);
+  
+}
+*/
   private static void sleep() throws InterruptedException {
     for (;;) {
       Thread.sleep(500);
@@ -95,6 +107,7 @@ public class Main {
 
   private static Twitter setupTwitter() throws TwitterException {
     if (TWITTER_CONFIGURED) {
+      System.out.println("Twitter is configured...");
       TwitterFactory factory = new TwitterFactory();
       final Twitter twitter = factory.getInstance();
       AccessToken accessToken = loadAccessToken();
@@ -102,13 +115,15 @@ public class Main {
       currentStatus = getCurrentStatus(twitter);
       return twitter;
     }
+    System.out.println("Twitter ain't configured...");
     return null;
   }
 
   private static void updateStatus(Twitter twitter, LightStatus newStatus) {
     if (twitter != null && currentStatus != newStatus) {
+      System.out.println("Running updateStatus oojimabar ..");
       try {
-        twitter.updateStatus(newStatus.status + " : " + new Date());
+        twitter.updateStatus(newStatus.status + " : Test message sent from my PC : " + new Date());
         currentStatus = newStatus;
       } catch (TwitterException e) {
         throw new RuntimeException(e);
@@ -117,7 +132,9 @@ public class Main {
   }
 
   private static LightStatus getCurrentStatus(Twitter twitter) throws TwitterException {
+    System.out.println("Running getCurrentStatus whatchamacallit..");
     ResponseList<Status> homeTimeline = twitter.getHomeTimeline();
+    
     String text = homeTimeline.get(0).getText();
     if (text.contains("on")) {
       return LightStatus.ON;
@@ -126,11 +143,13 @@ public class Main {
   }
 
   private static void authenticateTwitter(AccessToken accessToken, Twitter twitter) {
-    twitter.setOAuthConsumer(APP_KEY, APP_SECRET);
+    System.out.println("Running authenticateTwitter doo dah..");
+    twitter.setOAuthConsumer(API_KEY, API_SECRET);
     twitter.setOAuthAccessToken(accessToken);
   }
 
   private static AccessToken loadAccessToken() {
+    System.out.println("Running loadAccessToken thingymajig..");
     String token = Main.token;
     String tokenSecret = secret;
     return new AccessToken(token, tokenSecret);
