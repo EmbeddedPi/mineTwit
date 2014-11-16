@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    EclipseSource - initial API and implementation
+ *    EmbeddedPi - Converted scope of usage to Minecraft server notification
  ******************************************************************************/
-package com.eclipsesource.iot.photosensor.example;
+package piTwit;
 
 import java.util.Date;
 
@@ -40,6 +41,7 @@ public class Main {
   private static final String token = "ZZZ";
   private static final String secret = "ABABAB";
 
+
   static LightStatus currentStatus;
   private static Twitter twitter;
 
@@ -66,6 +68,7 @@ public class Main {
     System.out.println("All done.....");
     sleep();
   }
+  
 
 /*
   private static void configureSenssor(final GpioPinDigitalOutput led, final GpioPinDigitalInput sensor) {
