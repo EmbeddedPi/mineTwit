@@ -16,10 +16,15 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class Main {
 
-  private static final String testMessage = "Prosper is the original ginger Ninja but the only one.";
+  private static final String testMessage = "Prosper is the original ginger Ninja but not the only one.";
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
   private static final String API_SECRET = "YYYY";
