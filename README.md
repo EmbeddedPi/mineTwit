@@ -1,7 +1,7 @@
-piTwit
+mineTwit
 =====================
 
-A twitter notification service for RaspberryPi based minecraft servers based on a Bukkit plugin.
+A twitter notification service for minecraft servers based on a Bukkit plugin. Can be used on both raspberryPi and PC based servers. Tested with Glowstone and Spigot.
 
 Notes
      

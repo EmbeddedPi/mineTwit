@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
  * Copyright (c) 2014 EclipseSource and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,8 +8,8 @@
  * Contributors:
  *    EclipseSource - initial API and implementation
  *    EmbeddedPi - Converted scope of usage to Minecraft server notification
- ******************************************************************************/
-package piTwit;
+ *****************************************************************************/
+package mineTwit;
 
 import java.util.Date;
 import twitter4j.Twitter;
@@ -19,7 +19,7 @@ import twitter4j.auth.AccessToken;
 
 public class Main {
 
-  private static final String testMessage = "Banana_Skywalker rummages through bins for food";
+  private static final String testMessage = "Prosper is the original ginger Ninja but the only one.";
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
   private static final String API_SECRET = "YYYY";
