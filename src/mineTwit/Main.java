@@ -22,7 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class Main {
+public class Main extends JavaPlugin implements Listener {
 
   private static final String testMessage = "Prosper is the original ginger Ninja but not the only one.";
   private static final boolean TWITTER_CONFIGURED = false;
@@ -33,8 +33,9 @@ public class Main {
   private static Twitter twitter;
 
   
-  public static void main(String[] args) throws Exception {
-    System.out.println("Starting piTwit...");
+  
+  public void main(String[] args) throws Exception {
+    getLogger().info("mineTwit is ready to go tweet tweet");
     twitter = setupTwitter();
     updateStatus(twitter, testMessage);
     System.out.println("All done.....");

@@ -1,3 +1,0 @@
-name: {$PluginName}
-main: {$PackageName}.{$MainClass}
-version: {$VersionNumber}
