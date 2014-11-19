@@ -31,15 +31,41 @@ public class Main extends JavaPlugin implements Listener {
   private static final String token = "ZZZ";
   private static final String secret = "ABABAB";
   private static Twitter twitter;
+  
 
-  
-  
   public void main(String[] args) throws Exception {
-    getLogger().info("mineTwit is ready to go tweet tweet");
+    getLogger().info("mineTwit is running main method");
     twitter = setupTwitter();
     updateStatus(twitter, testMessage);
-    System.out.println("All done.....");
     sleep();
+    getLogger().info("finished main method");
+  }
+  
+  
+  @Override
+  public void onEnable() {
+    // Register listener
+    getServer().getPluginManager().registerEvents(this, this);
+    // Set up Twitter
+    getLogger().info("mineTwit goes tweet tweet");
+  }
+  
+  @Override
+  public void onDisable() {
+    // Server down notification
+    getLogger().info("mineTwit has fallen off the perch");
+  }
+  
+  @EventHandler
+  public void onLogin(PlayerJoinEvent event) {
+    // Check whether internal or external IP address
+    getLogger().info("Someone flew in");
+  }
+  
+  @EventHandler
+  public void onLogout (PlayerQuitEvent event) {
+    // Check whether internal or external IP address
+    getLogger().info("Someone flew away");
   }
   
   private static void sleep() throws InterruptedException {
