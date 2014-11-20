@@ -11,11 +11,11 @@ Current Status
               
 Set up to tweet to my account upon run
 
+Can be loaded as a plugin by both Glowstone and Spigot
+
 To Do List
          
-Add in Bukkit dependencies
-
-Add plugin.yml so Minecraft can load it
+Fix exception errors on compile
 
 Merge player join/leave code from piLED
 
