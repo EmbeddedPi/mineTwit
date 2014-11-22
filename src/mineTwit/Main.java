@@ -27,7 +27,8 @@ public class Main extends JavaPlugin implements Listener {
   private String localMessage = "";
   private String recentPlayer = "";
   private String recentPlayerIP = "";
-  private static final String entryMessage = "On it like a car bonnet.";
+  private boolean recentJoin = false;
+  private static final String entryMessage = "Server's up, time to get crafting!";
   private static final String exitMessage = "The server has joined the choir invisibule";
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
@@ -35,16 +36,6 @@ public class Main extends JavaPlugin implements Listener {
   private static final String token = "ZZZ";
   private static final String secret = "ABABAB";
   private static Twitter twitter;
-  
-/*
-  public void main(String[] args) throws Exception {
-    getLogger().info("mineTwit is running main method");
-    twitter = setupTwitter();
-    updateStatus(twitter, entryMessage);
-    sleep();
-    getLogger().info("finished main method");
-  }
-*/ 
   
   @Override
   public void onEnable() {
@@ -76,44 +67,52 @@ public class Main extends JavaPlugin implements Listener {
   
   @EventHandler
   public void onLogin(PlayerJoinEvent event) throws Exception {
+    recentJoin = true;
     recentPlayer = event.getPlayer().getName();
     recentPlayerIP = event.getPlayer().getAddress().getHostString();
-    // Check whether internal or external IP address
-    if (recentPlayerIP.startsWith("192.168")) {
-      localMessage = recentPlayer + " is a local person."; 
-    }
-    else {
-      localMessage = recentPlayer + " is not local.";
-    }
-    getLogger().info(recentPlayer + " flew in");
+    localMessage = setLocalMessage(recentJoin);
     getLogger().info(localMessage);
     updateStatus(twitter, recentPlayer + " flew in. " + localMessage);
-   }
+    localMessage = "";
+  }
   
   @EventHandler
   public void onLogout (PlayerQuitEvent event) throws Exception {
+    recentJoin = false;
     recentPlayer = event.getPlayer().getName();
     recentPlayerIP = event.getPlayer().getAddress().getHostString();
-    // Check whether internal or external IP address
-    if (recentPlayerIP.startsWith("192.168")) {
-      localMessage = recentPlayer + " was a local person."; 
-    }
-    else {
-      localMessage = recentPlayer + " was not local.";
-    }
-    getLogger().info(recentPlayer + " flew away");
+    localMessage = setLocalMessage(recentJoin);
     getLogger().info(localMessage);
     updateStatus(twitter, recentPlayer + " flew away. " + localMessage);
-   }
+    localMessage = "";
+  }
   
-  /*
-  private static void sleep() throws InterruptedException {
-    for (;;) {
-      Thread.sleep(500);
+  private String setLocalMessage (boolean recentJoin) {
+    if (isLocal(recentPlayerIP)) {
+      if (recentJoin) {
+        return (recentPlayer + " is a local person.");
+      } else {
+        return (recentPlayer + " was a local person."); 
+      }
+    } else {
+      if (recentJoin) {
+        return (recentPlayer + " is not local!");
+      } else {
+        return (recentPlayer + " was not local."); 
+      }
     }
   }
-*/
-
+  
+  
+  private boolean isLocal(String recentPlayerIP) {
+    if (recentPlayerIP.startsWith("192.168")) {
+    return true;
+    }
+    else {
+    return false;
+    }
+  }
+  
   private static Twitter setupTwitter() throws TwitterException {
     if (TWITTER_CONFIGURED) {
       TwitterFactory factory = new TwitterFactory();
@@ -125,11 +124,12 @@ public class Main extends JavaPlugin implements Listener {
     return null;
   }
 
-  private static void updateStatus(Twitter twitter, String testMessage) {
+  private void updateStatus(Twitter twitter, String testMessage) {
     if (twitter != null) {
       try {
-        twitter.updateStatus(testMessage + " : Message sent from test server : " + new Date());
+        twitter.updateStatus(testMessage + " : " + new Date());
       } catch (TwitterException e) {
+        getLogger().info("Twitter is broken because of " + e);
         throw new RuntimeException(e);
       }
     }
