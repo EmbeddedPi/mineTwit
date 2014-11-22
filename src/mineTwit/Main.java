@@ -24,7 +24,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class Main extends JavaPlugin implements Listener {
 
-  private static final String testMessage = "Prosper is the original ginger Ninja but not the only one.";
+  private String localMessage = "";
+  private String recentPlayer = "";
+  private String recentPlayerIP = "";
+  private static final String entryMessage = "On it like a car bonnet.";
+  private static final String exitMessage = "The server has joined the choir invisibule";
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
   private static final String API_SECRET = "YYYY";
@@ -32,47 +36,83 @@ public class Main extends JavaPlugin implements Listener {
   private static final String secret = "ABABAB";
   private static Twitter twitter;
   
-
+/*
   public void main(String[] args) throws Exception {
     getLogger().info("mineTwit is running main method");
     twitter = setupTwitter();
-    updateStatus(twitter, testMessage);
+    updateStatus(twitter, entryMessage);
     sleep();
     getLogger().info("finished main method");
   }
-  
+*/ 
   
   @Override
   public void onEnable() {
     // Register listener
     getServer().getPluginManager().registerEvents(this, this);
     // Set up Twitter
-    getLogger().info("mineTwit goes tweet tweet");
+    try {
+      twitter = setupTwitter();
+      updateStatus(twitter, entryMessage);
+      } catch (TwitterException e) {
+      getLogger().info("Twitter is broken because of " + e);
+      } finally {
+      getLogger().info("mineTwit goes tweet tweet");
+      }
   }
   
   @Override
   public void onDisable() {
     // Server down notification
-    getLogger().info("mineTwit has fallen off the perch");
+    try {
+      twitter = setupTwitter();
+      updateStatus(twitter, exitMessage);
+      } catch (TwitterException e) {
+      getLogger().info("Twitter is broken because of " + e);
+      } finally {
+      getLogger().info("mineTwit has fallen off the perch");
+      }
   }
   
   @EventHandler
-  public void onLogin(PlayerJoinEvent event) {
+  public void onLogin(PlayerJoinEvent event) throws Exception {
+    recentPlayer = event.getPlayer().getName();
+    recentPlayerIP = event.getPlayer().getAddress().getHostString();
     // Check whether internal or external IP address
-    getLogger().info("Someone flew in");
-  }
+    if (recentPlayerIP.startsWith("192.168")) {
+      localMessage = recentPlayer + " is a local person."; 
+    }
+    else {
+      localMessage = recentPlayer + " is not local.";
+    }
+    getLogger().info(recentPlayer + " flew in");
+    getLogger().info(localMessage);
+    updateStatus(twitter, recentPlayer + " flew in. " + localMessage);
+   }
   
   @EventHandler
-  public void onLogout (PlayerQuitEvent event) {
+  public void onLogout (PlayerQuitEvent event) throws Exception {
+    recentPlayer = event.getPlayer().getName();
+    recentPlayerIP = event.getPlayer().getAddress().getHostString();
     // Check whether internal or external IP address
-    getLogger().info("Someone flew away");
-  }
+    if (recentPlayerIP.startsWith("192.168")) {
+      localMessage = recentPlayer + " was a local person."; 
+    }
+    else {
+      localMessage = recentPlayer + " was not local.";
+    }
+    getLogger().info(recentPlayer + " flew away");
+    getLogger().info(localMessage);
+    updateStatus(twitter, recentPlayer + " flew away. " + localMessage);
+   }
   
+  /*
   private static void sleep() throws InterruptedException {
     for (;;) {
       Thread.sleep(500);
     }
   }
+*/
 
   private static Twitter setupTwitter() throws TwitterException {
     if (TWITTER_CONFIGURED) {
@@ -88,7 +128,7 @@ public class Main extends JavaPlugin implements Listener {
   private static void updateStatus(Twitter twitter, String testMessage) {
     if (twitter != null) {
       try {
-        twitter.updateStatus(testMessage + " : Test message sent from my PC : " + new Date());
+        twitter.updateStatus(testMessage + " : Message sent from test server : " + new Date());
       } catch (TwitterException e) {
         throw new RuntimeException(e);
       }
