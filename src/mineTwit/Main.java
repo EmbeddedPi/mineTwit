@@ -27,9 +27,9 @@ public class Main extends JavaPlugin implements Listener {
   private String localMessage = "";
   private String recentPlayer = "";
   private String recentPlayerIP = "";
+  private boolean recentJoin = false;
   private static final String entryMessage = "Server's up, time to get crafting!";
   private static final String exitMessage = "The server has joined the choir invisibule";
-  private boolean recentJoin = false;
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
   private static final String API_SECRET = "YYYY";
