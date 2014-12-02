@@ -15,10 +15,7 @@ Can be loaded as a plugin by both Glowstone and Spigot
 
 To Do List
          
-Fix exception errors on compile
-
-Merge player join/leave code from piLED
-
+Empty, done.
 
 
 
