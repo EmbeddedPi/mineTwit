@@ -13,9 +13,6 @@ package mineTwit;
 
 import java.text.DecimalFormat;
 import java.util.Date;
-// import java.text.DecimnalFormat;
-
-
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -36,14 +33,8 @@ public class Main extends JavaPlugin implements Listener {
   private String recentPlayerIP = "";
   private Location recentPlayerLocation;
   private String locationMessage = "";
-  private double playerX;
-  private double playerY;
-  private double playerZ;
-  private String Xcoords = "";
-  private String Ycoords = "";
-  private String Zcoords = "";
   private boolean recentJoin = false;
-  // private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"};
+  private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"};
   private static final String entryMessage = "Server's up, time to get crafting!";
   private static final String exitMessage = "The server has joined the choir invisibule";
   private static final boolean TWITTER_CONFIGURED = false;
@@ -87,17 +78,8 @@ public class Main extends JavaPlugin implements Listener {
     recentPlayer = event.getPlayer().getName();
     recentPlayerIP = event.getPlayer().getAddress().getHostString();
     recentPlayerLocation = event.getPlayer().getLocation();
-    // TODO make this a separate method and check for presence in exemption list
-    playerX = recentPlayerLocation.getX();
-    playerY = recentPlayerLocation.getY();
-    playerZ = recentPlayerLocation.getZ();
-    DecimalFormat df = new DecimalFormat("#.##");
-    Xcoords = df.format(playerX);
-    Ycoords = df.format(playerY);
-    Zcoords = df.format(playerZ);
+    locationMessage = parseLocation(recentPlayerLocation);
     localMessage = setLocalMessage(recentJoin);
-    getLogger().info(localMessage);
-    locationMessage = "X:" + Xcoords + " Y:" + Ycoords + " Z:" + Zcoords;
     getLogger().info(locationMessage);
     updateStatus(twitter, recentPlayer + " flew in." + localMessage + "\n" + locationMessage);
     localMessage = "";
@@ -109,17 +91,8 @@ public class Main extends JavaPlugin implements Listener {
     recentPlayer = event.getPlayer().getName();
     recentPlayerIP = event.getPlayer().getAddress().getHostString();
     recentPlayerLocation = event.getPlayer().getLocation();
-    // TODO make this a separate method and check for presence in exemption list
-    playerX = recentPlayerLocation.getX();
-    playerY = recentPlayerLocation.getY();
-    playerZ = recentPlayerLocation.getZ();
-    DecimalFormat df = new DecimalFormat("#.##");
-    Xcoords = df.format(playerX);
-    Ycoords = df.format(playerY);
-    Zcoords = df.format(playerZ);
+    locationMessage = parseLocation(recentPlayerLocation);
     localMessage = setLocalMessage(recentJoin);
-    getLogger().info(localMessage);
-    locationMessage = "X:" + Xcoords + " Y:" + Ycoords + " Z:" + Zcoords;
     getLogger().info(locationMessage);
     updateStatus(twitter, recentPlayer + " flew away." + localMessage + "\n" + locationMessage);
     localMessage = "";
@@ -148,6 +121,35 @@ public class Main extends JavaPlugin implements Listener {
     else {
     return false;
     }
+  }
+  
+  private String parseLocation(Location location) {
+    // 5 records to include currently unused pitch and yaw
+    String playerLocation[] = {"","","","",""};
+    String locationString = "";
+    short exemption = 0;
+    DecimalFormat df = new DecimalFormat("#.##");
+    playerLocation[0] = df.format(location.getX());
+    playerLocation[1] = df.format(location.getY());
+    playerLocation[2] = df.format(location.getZ());
+    /* Possibly use in future
+    playerLocation[3] = df.format(location.getPitch());
+    playerLocation[4] = df.format(location.getYaw());
+    */
+    for (String e : exemptionList) {
+      if (e.contains(recentPlayer)) {
+        exemption++;
+      }
+    }
+    if (exemption > 0) {
+      locationString = recentPlayer + " is sneaky and can't be seen!";
+      getLogger().info(recentPlayer + " is exempt from co-ord display");
+    }
+    else {
+      locationString = "X: " + playerLocation[0] + " Y: " + playerLocation[1] + " Z: " + playerLocation[2];
+      getLogger().info(recentPlayer + " is not exempt from co-ord display");
+    }
+    return locationString;
   }
   
   private static Twitter setupTwitter() throws TwitterException {
