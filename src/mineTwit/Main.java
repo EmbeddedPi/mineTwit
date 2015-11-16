@@ -23,8 +23,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-// import org.bukkit.Bukkit;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -36,7 +39,7 @@ public class Main extends JavaPlugin implements Listener {
   private boolean recentJoin = false;
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"};
   private static final String entryMessage = "Server's up, time to get crafting!";
-  private static final String exitMessage = "The server has joined the choir invisibule";
+  private static final String exitMessage = "The server has joined the choir invisibule.";
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
   private static final String API_SECRET = "YYYY";
@@ -98,6 +101,15 @@ public class Main extends JavaPlugin implements Listener {
     localMessage = "";
   }
   
+  @EventHandler
+  public void onBlockPlace(BlockPlaceEvent event) {
+    Player player = event.getPlayer();
+    Block block = event.getBlock();
+    Material mat = block.getType();
+    // Tweet who placed which block.
+    updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
+  }
+  
   private String setLocalMessage (boolean recentJoin) {
     if (isLocal(recentPlayerIP)) {
       if (recentJoin) {
@@ -115,11 +127,15 @@ public class Main extends JavaPlugin implements Listener {
   }
   
   private boolean isLocal(String recentPlayerIP) {
-    if (recentPlayerIP.startsWith("192.168")) {
-    return true;
+    // Check whether PI address is either coming from router hence WAN
+    if (recentPlayerIP.equals("192.168.1.1")) {
+      return false;
+    }
+    else if (recentPlayerIP.startsWith("192.168")) {
+      return true;
     }
     else {
-    return false;
+      return false;
     }
   }
   
@@ -127,7 +143,7 @@ public class Main extends JavaPlugin implements Listener {
     // 5 records to include currently unused pitch and yaw
     String playerLocation[] = {"","","","",""};
     String locationString = "";
-    short exemption = 0;
+    Boolean exemption = false;
     DecimalFormat df = new DecimalFormat("#.##");
     playerLocation[0] = df.format(location.getX());
     playerLocation[1] = df.format(location.getY());
@@ -138,10 +154,10 @@ public class Main extends JavaPlugin implements Listener {
     */
     for (String e : exemptionList) {
       if (e.contains(recentPlayer)) {
-        exemption++;
+        exemption = true;
       }
     }
-    if (exemption > 0) {
+    if (exemption) {
       locationString = recentPlayer + " is sneaky and can't be seen!";
       getLogger().info(recentPlayer + " is exempt from co-ord display");
     }
@@ -152,13 +168,16 @@ public class Main extends JavaPlugin implements Listener {
     return locationString;
   }
   
-  private static Twitter setupTwitter() throws TwitterException {
+  private Twitter setupTwitter() throws TwitterException {
     if (TWITTER_CONFIGURED) {
       TwitterFactory factory = new TwitterFactory();
       final Twitter twitter = factory.getInstance();
       AccessToken accessToken = loadAccessToken();
       authenticateTwitter(accessToken, twitter);
       return twitter;
+    }
+    else {
+      getLogger().info("Twitter is switched off you doughnut.");
     }
     return null;
   }
