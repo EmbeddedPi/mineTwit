@@ -21,13 +21,21 @@ import twitter4j.auth.AccessToken;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.LivingEntity;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -108,6 +116,54 @@ public class Main extends JavaPlugin implements Listener {
     Material mat = block.getType();
     // Tweet who placed which block.
     updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
+  }
+  
+  @EventHandler
+  public void onDeath (final EntityDeathEvent event) {
+    if (!(event.getEntity() instanceof Player)) {
+      final Player player = (Player)event.getEntity();
+      updateStatus(twitter, player.getName() + " kicked the bucket.");
+    }
+  }
+  
+  @EventHandler
+  public void onEntityTame (final EntityTameEvent event) {
+    final Player player = (Player)event.getOwner();
+    final LivingEntity entity = (LivingEntity)event.getEntity();
+    updateStatus(twitter, player.getName() + " tamed a " + entity.getCustomName());
+  }
+  
+  @EventHandler
+  public void onFishing (final PlayerFishEvent event) {
+    final Player player = (Player)event.getPlayer();
+    updateStatus(twitter, player.getName() + " went fishing.");
+  }
+  
+  @EventHandler
+  public void onPlayerKick (final PlayerKickEvent event) {
+    final Player player = (Player)event.getPlayer();
+    updateStatus(twitter, player.getName() + " was unceremoniously booted off.");
+  }
+  
+  @EventHandler
+  public void onPlayerTeleport (final PlayerTeleportEvent event) {
+    final Player player = (Player)event.getPlayer();
+    final Location from = event.getFrom();
+    final Location to = event.getTo();
+    if (from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ()) {
+      return;
+    }
+    updateStatus(twitter, player.getName() + " teleported from X" + String.valueOf(from.getBlockX()) + ",Y" + String.valueOf(from.getBlockY()) + ",Z" + " to X" + String.valueOf(to.getBlockX()) + ",Y" + String.valueOf(to.getBlockY()) + ",Z" + String.valueOf(to.getBlockZ()));
+  }
+ 
+  @EventHandler
+  public void onPVehicleEnter (final VehicleEnterEvent event) {
+    if (!(event.getEntered() instanceof Player)) {
+      return;
+    }
+    final Player player = (Player)event.getEntered();
+    final Vehicle vehicle = event.getVehicle();
+    updateStatus(twitter, player.getName() + " got into a " + String.valueOf(vehicle) + ".");
   }
   
   private String setLocalMessage (boolean recentJoin) {
