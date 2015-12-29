@@ -121,8 +121,9 @@ public class Main extends JavaPlugin implements Listener {
   @EventHandler
   public void onDeath (final EntityDeathEvent event) {
     if (!(event.getEntity() instanceof Player)) {
-      final Player player = (Player)event.getEntity();
-      updateStatus(twitter, player.getName() + " kicked the bucket.");
+      // final Player player = (Player)event.getEntity();
+      updateStatus(twitter, "Someone kicked the bucket.");
+      // updateStatus(twitter, player.getName() + " kicked the bucket.");
     }
   }
   
