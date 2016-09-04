@@ -33,6 +33,8 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.LivingEntity;
@@ -45,7 +47,7 @@ public class Main extends JavaPlugin implements Listener {
   private Location recentPlayerLocation;
   private String locationMessage = "";
   private boolean recentJoin = false;
-  private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"};
+  private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
   private static final String entryMessage = "Server's up, time to get crafting!";
   private static final String exitMessage = "The server has joined the choir invisibule.";
   private static final boolean TWITTER_CONFIGURED = false;
@@ -54,6 +56,11 @@ public class Main extends JavaPlugin implements Listener {
   private static final String token = "ZZZ";
   private static final String secret = "ABABAB";
   private static Twitter twitter;
+  private class notificationList {
+    String type;
+    boolean status;
+  }
+  notificationList[] myNotifications = new notificationList[7]; 
   
   @Override
   public void onEnable() {
@@ -68,6 +75,7 @@ public class Main extends JavaPlugin implements Listener {
       } finally {
       getLogger().info("mineTwit goes tweet tweet");
       }
+    initialiseNotifications();
   }
   
   @Override
@@ -85,87 +93,188 @@ public class Main extends JavaPlugin implements Listener {
   
   @EventHandler
   public void onLogin(PlayerJoinEvent event) throws Exception {
-    recentJoin = true;
-    recentPlayer = event.getPlayer().getName();
-    recentPlayerIP = event.getPlayer().getAddress().getHostString();
-    recentPlayerLocation = event.getPlayer().getLocation();
-    locationMessage = parseLocation(recentPlayerLocation);
-    localMessage = setLocalMessage(recentJoin);
-    getLogger().info(locationMessage);
-    updateStatus(twitter, recentPlayer + " flew in." + localMessage + "\n" + locationMessage);
-    localMessage = "";
+    if (myNotifications[0].status) {
+      recentJoin = true;
+      recentPlayer = event.getPlayer().getName();
+      recentPlayerIP = event.getPlayer().getAddress().getHostString();
+      recentPlayerLocation = event.getPlayer().getLocation();
+      locationMessage = parseLocation(recentPlayerLocation);
+      localMessage = setLocalMessage(recentJoin);
+      getLogger().info(locationMessage);
+      updateStatus(twitter, recentPlayer + " flew in." + localMessage + "\n" + locationMessage);
+      localMessage = "";
+    } else {
+      return;
+    }
   }
   
   @EventHandler
   public void onLogout (PlayerQuitEvent event) throws Exception {
-    recentJoin = false;
-    recentPlayer = event.getPlayer().getName();
-    recentPlayerIP = event.getPlayer().getAddress().getHostString();
-    recentPlayerLocation = event.getPlayer().getLocation();
-    locationMessage = parseLocation(recentPlayerLocation);
-    localMessage = setLocalMessage(recentJoin);
-    getLogger().info(locationMessage);
-    updateStatus(twitter, recentPlayer + " flew away." + localMessage + "\n" + locationMessage);
-    localMessage = "";
+    if (myNotifications[0].status) {
+      recentJoin = false;
+      recentPlayer = event.getPlayer().getName();
+      recentPlayerIP = event.getPlayer().getAddress().getHostString();
+      recentPlayerLocation = event.getPlayer().getLocation();
+      locationMessage = parseLocation(recentPlayerLocation);
+      localMessage = setLocalMessage(recentJoin);
+      getLogger().info(locationMessage);
+      updateStatus(twitter, recentPlayer + " flew away." + localMessage + "\n" + locationMessage);
+      localMessage = "";
+    } else {
+      return;
+    }
   }
+  
+//TODO Sort this out
+  @SuppressWarnings("unused")
+  private boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList[] myNotifications) {    
+    if (cmd.getName().equalsIgnoreCase("setNotification")) { 
+      // Check a single argument for IPAddress
+      if (args.length < 2) {
+        sender.sendMessage("This needs two arguments!");
+            return false;
+        } else if (args.length >2) {
+          sender.sendMessage("Calm down, too many arguments!");
+            return false;
+        } else {
+      // output label to check it's OK
+      getLogger().info("label is " + label); 
+      getLogger().info("args[0] is " + args[0]);
+      getLogger().info("args[1] is " + args[1]);      
+      getLogger().info("Sent by " + sender);
+      // Check first argument is a valid command
+      // Check second argument is valid boolean
+      return true;}
+    } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
+      getLogger().info(myNotifications[0].type);
+      getLogger().info(String.valueOf(myNotifications[0].status));
+      getLogger().info(myNotifications[1].type);
+      getLogger().info(String.valueOf(myNotifications[1].status));
+      getLogger().info(myNotifications[2].type);
+      getLogger().info(String.valueOf(myNotifications[2].status));
+      getLogger().info(myNotifications[3].type);
+      getLogger().info(String.valueOf(myNotifications[3].status));
+      getLogger().info(myNotifications[4].type);
+      getLogger().info(String.valueOf(myNotifications[4].status));
+      getLogger().info(myNotifications[5].type);
+      getLogger().info(String.valueOf(myNotifications[5].status));
+      getLogger().info(myNotifications[6].type);
+      getLogger().info(String.valueOf(myNotifications[6].status));
+      getLogger().info(myNotifications[7].type); 
+      getLogger().info(String.valueOf(myNotifications[7].status));
+      return true;
+    } else {
+      getLogger().info("Gibberish or a typo, either way it ain't happening");
+    return false; 
+    }
+  }
+    
+ public void initialiseNotifications() {
+  // Set defaults
+  myNotifications[0].type = "loggingInOut";
+  myNotifications[0].status = true;
+  myNotifications[1].type= "blockPlacing";
+  // Set to false as will overload twitter update limits if building
+  myNotifications[1].status = false;
+  myNotifications[2].type= "dying";
+  myNotifications[2].status = true;
+  myNotifications[3].type= "taming";
+  myNotifications[3].status = true;
+  myNotifications[4].type= "fishing";
+  myNotifications[4].status = true;
+  myNotifications[5].type= "kicking";
+  myNotifications[5].status = true;
+  myNotifications[6].type= "teleporting";
+  myNotifications[6].status = true;
+  myNotifications[7].type= "enteringVehicle"; 
+  myNotifications[7].status = true;
+ }
   
   @EventHandler
   public void onBlockPlace(BlockPlaceEvent event) {
-    Player player = event.getPlayer();
-    Block block = event.getBlock();
-    Material mat = block.getType();
-    // Tweet who placed which block.
-    updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
+    if (myNotifications[1].status) {
+      Player player = event.getPlayer();
+      Block block = event.getBlock();
+      Material mat = block.getType();
+      // Tweet who placed which block.
+      updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
+    } else {
+      return;
+    }
   }
   
   @EventHandler
   public void onDeath (final EntityDeathEvent event) {
-    if (!(event.getEntity() instanceof Player)) {
+    if (myNotifications[2].status) {
+      if (!(event.getEntity() instanceof Player)) {
       updateStatus(twitter, "Something kicked the bucket.");
+      } else {
+        final Player player = (Player)event.getEntity();
+        updateStatus(twitter, player.getName() + " kicked the bucket.");
+      }
     } else {
-    final Player player = (Player)event.getEntity();
-    updateStatus(twitter, player.getName() + " kicked the bucket.");
+      return;
     }
   }
   
   @EventHandler
   public void onEntityTame (final EntityTameEvent event) {
-    final Player player = (Player)event.getOwner();
-    final LivingEntity entity = (LivingEntity)event.getEntity();
-    updateStatus(twitter, player.getName() + " tamed a " + entity.getCustomName());
+    if (myNotifications[3].status) {
+      final Player player = (Player)event.getOwner();
+      final LivingEntity entity = (LivingEntity)event.getEntity();
+      updateStatus(twitter, player.getName() + " tamed a " + entity.getCustomName());
+    } else {
+      return;
+    }
   }
   
   @EventHandler
   public void onFishing (final PlayerFishEvent event) {
-    final Player player = (Player)event.getPlayer();
-    updateStatus(twitter, player.getName() + " went fishing.");
+    if (myNotifications[4].status) {
+        final Player player = (Player)event.getPlayer();
+        updateStatus(twitter, player.getName() + " went fishing.");
+    } else {
+      return;
+    }
   }
   
   @EventHandler
   public void onPlayerKick (final PlayerKickEvent event) {
-    final Player player = (Player)event.getPlayer();
-    updateStatus(twitter, player.getName() + " was unceremoniously booted off.");
+    if (myNotifications[5].status) {
+      final Player player = (Player)event.getPlayer();
+      updateStatus(twitter, player.getName() + " was unceremoniously booted off.");
+    } else {
+      return;
+    }
   }
   
   @EventHandler
   public void onPlayerTeleport (final PlayerTeleportEvent event) {
-    final Player player = (Player)event.getPlayer();
-    final Location from = event.getFrom();
-    final Location to = event.getTo();
-    if (from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ()) {
+    if (myNotifications[6].status) {
+      final Player player = (Player)event.getPlayer();
+      final Location from = event.getFrom();
+      final Location to = event.getTo();
+      if (from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ()) {
+        return;
+      }
+      updateStatus(twitter, player.getName() + " teleported from X" + String.valueOf(from.getBlockX()) + ",Y" + String.valueOf(from.getBlockY()) + ",Z" + String.valueOf(from.getBlockZ())+ " to X" + String.valueOf(to.getBlockX()) + ",Y" + String.valueOf(to.getBlockY()) + ",Z" + String.valueOf(to.getBlockZ()));
+    } else {
       return;
     }
-    updateStatus(twitter, player.getName() + " teleported from X" + String.valueOf(from.getBlockX()) + ",Y" + String.valueOf(from.getBlockY()) + ",Z" + String.valueOf(from.getBlockZ())+ " to X" + String.valueOf(to.getBlockX()) + ",Y" + String.valueOf(to.getBlockY()) + ",Z" + String.valueOf(to.getBlockZ()));
   }
  
   @EventHandler
   public void onVehicleEnter (final VehicleEnterEvent event) {
-    if (!(event.getEntered() instanceof Player)) {
+    if (myNotifications[7].status) {
+      if (!(event.getEntered() instanceof Player)) {
+        return;
+      }
+      final Player player = (Player)event.getEntered();
+      final Vehicle vehicle = event.getVehicle();
+      updateStatus(twitter, player.getName() + " got into a " + String.valueOf(vehicle) + ".");
+    } else {
       return;
     }
-    final Player player = (Player)event.getEntered();
-    final Vehicle vehicle = event.getVehicle();
-    updateStatus(twitter, player.getName() + " got into a " + String.valueOf(vehicle) + ".");
   }
   
   private String setLocalMessage (boolean recentJoin) {
@@ -185,13 +294,15 @@ public class Main extends JavaPlugin implements Listener {
   }
   
   private boolean isLocal(String recentPlayerIP) {
-    // Check whether PI address is either coming from router hence WAN
+    // Check whether IP address is coming from router hence WAN
     if (recentPlayerIP.equals("192.168.1.1")) {
       return false;
     }
+    // Otherwise it must be local
     else if (recentPlayerIP.startsWith("192.168")) {
       return true;
     }
+    // Any other address is from outside
     else {
       return false;
     }

@@ -1,4 +1,15 @@
 name: mineTwit
 main: mineTwit.Main
-version: 0.0.2
+version: 0.0.3
 
+commands:
+   listNotification:
+      description: This lists the current status of all notifications.
+      usage: /listNotification 
+      permission: op
+      permission-message: No you don't, your level of omnipotency is sadly lacking!
+   setNotification:
+      description: This sets the status of any given notification.
+      usage: /setNotification [Notification name] [Status]
+      permission: op
+      permission-message: No you don't, you just aren't worthy!
