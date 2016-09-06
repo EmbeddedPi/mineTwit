@@ -126,7 +126,7 @@ public class Main extends JavaPlugin implements Listener {
   }
   
 //TODO Sort this out
-  @SuppressWarnings("unused")
+@SuppressWarnings("unused")
   private boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList[] myNotifications) {    
     if (cmd.getName().equalsIgnoreCase("setNotification")) { 
       // Check a single argument for IPAddress
@@ -138,33 +138,26 @@ public class Main extends JavaPlugin implements Listener {
             return false;
         } else {
       // output label to check it's OK
-      getLogger().info("label is " + label); 
-      getLogger().info("args[0] is " + args[0]);
-      getLogger().info("args[1] is " + args[1]);      
-      getLogger().info("Sent by " + sender);
+      sender.sendMessage("label is " + label); 
+      sender.sendMessage("args[0] is " + args[0]);
+      sender.sendMessage("args[1] is " + args[1]);      
+      sender.sendMessage("Sent by " + sender);
       // Check first argument is a valid command
       // Check second argument is valid boolean
       return true;}
     } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
-      getLogger().info(myNotifications[0].type);
-      getLogger().info(String.valueOf(myNotifications[0].status));
-      getLogger().info(myNotifications[1].type);
-      getLogger().info(String.valueOf(myNotifications[1].status));
-      getLogger().info(myNotifications[2].type);
-      getLogger().info(String.valueOf(myNotifications[2].status));
-      getLogger().info(myNotifications[3].type);
-      getLogger().info(String.valueOf(myNotifications[3].status));
-      getLogger().info(myNotifications[4].type);
-      getLogger().info(String.valueOf(myNotifications[4].status));
-      getLogger().info(myNotifications[5].type);
-      getLogger().info(String.valueOf(myNotifications[5].status));
-      getLogger().info(myNotifications[6].type);
-      getLogger().info(String.valueOf(myNotifications[6].status));
-      getLogger().info(myNotifications[7].type); 
-      getLogger().info(String.valueOf(myNotifications[7].status));
+      sender.sendMessage("Number of types is " + myNotifications.length);
+      sender.sendMessage(myNotifications[0].type + "   " + String.valueOf(myNotifications[0].status));
+      sender.sendMessage(myNotifications[1].type + "   " + String.valueOf(myNotifications[1].status));
+      sender.sendMessage(myNotifications[2].type + "   " + String.valueOf(myNotifications[2].status));
+      sender.sendMessage(myNotifications[3].type + "   " + String.valueOf(myNotifications[3].status));
+      sender.sendMessage(myNotifications[4].type + "   " + String.valueOf(myNotifications[4].status));
+      sender.sendMessage(myNotifications[5].type + "   " + String.valueOf(myNotifications[5].status));
+      sender.sendMessage(myNotifications[6].type + "   " + String.valueOf(myNotifications[6].status));
+      sender.sendMessage(myNotifications[7].type + "   " + String.valueOf(myNotifications[7].status));
       return true;
     } else {
-      getLogger().info("Gibberish or a typo, either way it ain't happening");
+      getLogger().info("Gibberish or a typo, eithe  r way it ain't happening");
     return false; 
     }
   }
