@@ -93,7 +93,7 @@ public class Main extends JavaPlugin implements Listener {
   
   @EventHandler
   public void onLogin(PlayerJoinEvent event) throws Exception {
-    if (myNotifications[0].status) {
+    // if (myNotifications[0].status) {
       recentJoin = true;
       recentPlayer = event.getPlayer().getName();
       recentPlayerIP = event.getPlayer().getAddress().getHostString();
@@ -103,14 +103,14 @@ public class Main extends JavaPlugin implements Listener {
       getLogger().info(locationMessage);
       updateStatus(twitter, recentPlayer + " flew in." + localMessage + "\n" + locationMessage);
       localMessage = "";
-    } else {
+    /* } else {
       return;
-    }
+    } */
   }
   
   @EventHandler
   public void onLogout (PlayerQuitEvent event) throws Exception {
-    if (myNotifications[0].status) {
+    // if (myNotifications[0].status) {
       recentJoin = false;
       recentPlayer = event.getPlayer().getName();
       recentPlayerIP = event.getPlayer().getAddress().getHostString();
@@ -120,9 +120,9 @@ public class Main extends JavaPlugin implements Listener {
       getLogger().info(locationMessage);
       updateStatus(twitter, recentPlayer + " flew away." + localMessage + "\n" + locationMessage);
       localMessage = "";
-    } else {
+    /*  else {
       return;
-    }
+    } */
   }
   
 //TODO Sort this out
@@ -157,45 +157,47 @@ public class Main extends JavaPlugin implements Listener {
       sender.sendMessage(myNotifications[7].type + "   " + String.valueOf(myNotifications[7].status));
       return true;
     } else {
-      getLogger().info("Gibberish or a typo, eithe  r way it ain't happening");
+      getLogger().info("Gibberish or a typo, either way it ain't happening");
     return false; 
     }
   }
     
- public void initialiseNotifications() {
+ private void initialiseNotifications() {
   // Set defaults
+  //TODO FIX THIS LINE!!!
   myNotifications[0].type = "loggingInOut";
-  myNotifications[0].status = true;
-  myNotifications[1].type= "blockPlacing";
+  // myNotifications[0].status = true;
+  // myNotifications[1].type= "blockPlacing";
   // Set to false as will overload twitter update limits if building
-  myNotifications[1].status = false;
-  myNotifications[2].type= "dying";
-  myNotifications[2].status = true;
-  myNotifications[3].type= "taming";
-  myNotifications[3].status = true;
-  myNotifications[4].type= "fishing";
-  myNotifications[4].status = true;
-  myNotifications[5].type= "kicking";
-  myNotifications[5].status = true;
-  myNotifications[6].type= "teleporting";
-  myNotifications[6].status = true;
-  myNotifications[7].type= "enteringVehicle"; 
-  myNotifications[7].status = true;
+  // myNotifications[1].status = false;
+  // myNotifications[2].type= "dying";
+  // myNotifications[2].status = true;
+  // myNotifications[3].type= "taming";
+  // myNotifications[3].status = true;
+  // myNotifications[4].type= "fishing";
+  // myNotifications[4].status = true;
+  // myNotifications[5].type= "kicking";
+  // myNotifications[5].status = true;
+  // myNotifications[6].type= "teleporting";
+  // myNotifications[6].status = true;
+  // myNotifications[7].type= "enteringVehicle"; 
+  // myNotifications[7].status = true;
  }
   
   @EventHandler
   public void onBlockPlace(BlockPlaceEvent event) {
-    if (myNotifications[1].status) {
+    // if (myNotifications[1].status) {
       Player player = event.getPlayer();
       Block block = event.getBlock();
       Material mat = block.getType();
       // Tweet who placed which block.
       updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
-    } else {
+    /* } else {
       return;
-    }
+    } */
   }
   
+  /*
   @EventHandler
   public void onDeath (final EntityDeathEvent event) {
     if (myNotifications[2].status) {
@@ -205,9 +207,9 @@ public class Main extends JavaPlugin implements Listener {
         final Player player = (Player)event.getEntity();
         updateStatus(twitter, player.getName() + " kicked the bucket.");
       }
-    } else {
+     } else {
       return;
-    }
+    } 
   }
   
   @EventHandler
@@ -269,6 +271,7 @@ public class Main extends JavaPlugin implements Listener {
       return;
     }
   }
+  */
   
   private String setLocalMessage (boolean recentJoin) {
     if (isLocal(recentPlayerIP)) {
