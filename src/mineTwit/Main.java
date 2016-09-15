@@ -21,22 +21,22 @@ import twitter4j.auth.AccessToken;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
+//import org.bukkit.event.block.BlockPlaceEvent;
+//import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
+//import org.bukkit.event.player.PlayerFishEvent;
+//import org.bukkit.event.player.PlayerKickEvent;
+//import org.bukkit.event.player.PlayerTeleportEvent;
+//import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
+//import org.bukkit.Material;
+//import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+//import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.LivingEntity;
 
 public class Main extends JavaPlugin implements Listener {
@@ -60,7 +60,6 @@ public class Main extends JavaPlugin implements Listener {
     String type;
     boolean status;
   }
-  notificationList[] myNotifications = new notificationList[7]; 
   
   @Override
   public void onEnable() {
@@ -163,27 +162,31 @@ public class Main extends JavaPlugin implements Listener {
   }
     
  private void initialiseNotifications() {
+  notificationList[] myNotifications = new notificationList[8]; 
+  for (int i=0; i<myNotifications.length; i++) {
+    myNotifications[i]= new notificationList(); 
+  }
   // Set defaults
-  //TODO FIX THIS LINE!!!
   myNotifications[0].type = "loggingInOut";
-  // myNotifications[0].status = true;
-  // myNotifications[1].type= "blockPlacing";
+  myNotifications[0].status = true;
+  myNotifications[1].type= "blockPlacing";
   // Set to false as will overload twitter update limits if building
-  // myNotifications[1].status = false;
-  // myNotifications[2].type= "dying";
-  // myNotifications[2].status = true;
-  // myNotifications[3].type= "taming";
-  // myNotifications[3].status = true;
-  // myNotifications[4].type= "fishing";
-  // myNotifications[4].status = true;
-  // myNotifications[5].type= "kicking";
-  // myNotifications[5].status = true;
-  // myNotifications[6].type= "teleporting";
-  // myNotifications[6].status = true;
-  // myNotifications[7].type= "enteringVehicle"; 
-  // myNotifications[7].status = true;
+  myNotifications[1].status = false;
+  myNotifications[2].type= "dying";
+  myNotifications[2].status = true;
+  myNotifications[3].type= "taming";
+  myNotifications[3].status = true;
+  myNotifications[4].type= "fishing";
+  myNotifications[4].status = true;
+  myNotifications[5].type= "kicking";
+  myNotifications[5].status = true;
+  myNotifications[6].type= "teleporting";
+  myNotifications[6].status = true;
+  myNotifications[7].type= "enteringVehicle"; 
+  myNotifications[7].status = true;
  }
   
+ /*
   @EventHandler
   public void onBlockPlace(BlockPlaceEvent event) {
     // if (myNotifications[1].status) {
@@ -192,12 +195,11 @@ public class Main extends JavaPlugin implements Listener {
       Material mat = block.getType();
       // Tweet who placed which block.
       updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
-    /* } else {
-      return;
-    } */
+    // } else {
+    //  return;
+    // } 
   }
   
-  /*
   @EventHandler
   public void onDeath (final EntityDeathEvent event) {
     if (myNotifications[2].status) {
@@ -211,18 +213,20 @@ public class Main extends JavaPlugin implements Listener {
       return;
     } 
   }
+ */
   
   @EventHandler
   public void onEntityTame (final EntityTameEvent event) {
-    if (myNotifications[3].status) {
+    // if (myNotifications[3].status) {
       final Player player = (Player)event.getOwner();
       final LivingEntity entity = (LivingEntity)event.getEntity();
       updateStatus(twitter, player.getName() + " tamed a " + entity.getCustomName());
-    } else {
-      return;
-    }
+    //} else {
+    //  return;
+    //}
   }
   
+  /*
   @EventHandler
   public void onFishing (final PlayerFishEvent event) {
     if (myNotifications[4].status) {
