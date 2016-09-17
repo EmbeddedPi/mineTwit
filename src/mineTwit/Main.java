@@ -125,8 +125,7 @@ public class Main extends JavaPlugin implements Listener {
   }
   
 //TODO Sort this out
-@SuppressWarnings("unused")
-  private boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList[] myNotifications) {    
+public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList[] myNotifications) {    
     if (cmd.getName().equalsIgnoreCase("setNotification")) { 
       // Check a single argument for IPAddress
       if (args.length < 2) {
