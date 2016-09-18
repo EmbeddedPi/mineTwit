@@ -125,9 +125,13 @@ public class Main extends JavaPlugin implements Listener {
   }
   
 //TODO Sort this out
-public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList[] myNotifications) {    
+//public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList myNotifications[]) {   
+@Override
+public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {    
+    getLogger().info("I've recognised some form of command");
     if (cmd.getName().equalsIgnoreCase("setNotification")) { 
-      // Check a single argument for IPAddress
+      getLogger().info("I've recognised a setNotification command");
+      // Check a correct number of arguments
       if (args.length < 2) {
         sender.sendMessage("This needs two arguments!");
             return false;
@@ -144,15 +148,16 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
       // Check second argument is valid boolean
       return true;}
     } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
-      sender.sendMessage("Number of types is " + myNotifications.length);
-      sender.sendMessage(myNotifications[0].type + "   " + String.valueOf(myNotifications[0].status));
-      sender.sendMessage(myNotifications[1].type + "   " + String.valueOf(myNotifications[1].status));
-      sender.sendMessage(myNotifications[2].type + "   " + String.valueOf(myNotifications[2].status));
-      sender.sendMessage(myNotifications[3].type + "   " + String.valueOf(myNotifications[3].status));
-      sender.sendMessage(myNotifications[4].type + "   " + String.valueOf(myNotifications[4].status));
-      sender.sendMessage(myNotifications[5].type + "   " + String.valueOf(myNotifications[5].status));
-      sender.sendMessage(myNotifications[6].type + "   " + String.valueOf(myNotifications[6].status));
-      sender.sendMessage(myNotifications[7].type + "   " + String.valueOf(myNotifications[7].status));
+      getLogger().info("I've recognised a listNotification command");
+      //sender.sendMessage("Number of types is " + myNotifications.length);
+      //sender.sendMessage(myNotifications[0].type + "   " + String.valueOf(myNotifications[0].status));
+      //sender.sendMessage(myNotifications[1].type + "   " + String.valueOf(myNotifications[1].status));
+      //sender.sendMessage(myNotifications[2].type + "   " + String.valueOf(myNotifications[2].status));
+      //sender.sendMessage(myNotifications[3].type + "   " + String.valueOf(myNotifications[3].status));
+      //sender.sendMessage(myNotifications[4].type + "   " + String.valueOf(myNotifications[4].status));
+      //sender.sendMessage(myNotifications[5].type + "   " + String.valueOf(myNotifications[5].status));
+      //sender.sendMessage(myNotifications[6].type + "   " + String.valueOf(myNotifications[6].status));
+      //sender.sendMessage(myNotifications[7].type + "   " + String.valueOf(myNotifications[7].status));
       return true;
     } else {
       getLogger().info("Gibberish or a typo, either way it ain't happening");
@@ -166,6 +171,7 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
     myNotifications[i]= new notificationList(); 
   }
   // Set defaults
+  getLogger().info("I'm setting the array I is");
   myNotifications[0].type = "loggingInOut";
   myNotifications[0].status = true;
   myNotifications[1].type= "blockPlacing";
@@ -183,6 +189,9 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
   myNotifications[6].status = true;
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
+  for (int i=0; i<myNotifications.length; i++) {
+    getLogger().info(myNotifications[i].type + " is " + myNotifications[i].status); 
+  }
  }
   
  /*
