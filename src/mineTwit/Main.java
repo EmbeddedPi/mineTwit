@@ -60,6 +60,7 @@ public class Main extends JavaPlugin implements Listener {
     String type;
     boolean status;
   }
+  notificationList[] myNotifications = new notificationList[8]; 
   
   @Override
   public void onEnable() {
@@ -145,19 +146,23 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
       sender.sendMessage("args[1] is " + args[1]);      
       sender.sendMessage("Sent by " + sender);
       // Check first argument is a valid command
+      for (int i=0; i<myNotifications.length; i++) {
+        if (myNotifications[i].type.equals(args[0])) {
+          sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
+          if (args[1].equalsIgnoreCase("false")) {
+            // Switch it off          
+          } 
+        } else {
+          sender.sendMessage("Not a match");
+        }
+      }
       // Check second argument is valid boolean
       return true;}
     } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
       getLogger().info("I've recognised a listNotification command");
-      //sender.sendMessage("Number of types is " + myNotifications.length);
-      //sender.sendMessage(myNotifications[0].type + "   " + String.valueOf(myNotifications[0].status));
-      //sender.sendMessage(myNotifications[1].type + "   " + String.valueOf(myNotifications[1].status));
-      //sender.sendMessage(myNotifications[2].type + "   " + String.valueOf(myNotifications[2].status));
-      //sender.sendMessage(myNotifications[3].type + "   " + String.valueOf(myNotifications[3].status));
-      //sender.sendMessage(myNotifications[4].type + "   " + String.valueOf(myNotifications[4].status));
-      //sender.sendMessage(myNotifications[5].type + "   " + String.valueOf(myNotifications[5].status));
-      //sender.sendMessage(myNotifications[6].type + "   " + String.valueOf(myNotifications[6].status));
-      //sender.sendMessage(myNotifications[7].type + "   " + String.valueOf(myNotifications[7].status));
+      for (int i=0; i<myNotifications.length; i++) {
+        sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
+      }
       return true;
     } else {
       getLogger().info("Gibberish or a typo, either way it ain't happening");
@@ -166,7 +171,6 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
   }
     
  private void initialiseNotifications() {
-  notificationList[] myNotifications = new notificationList[8]; 
   for (int i=0; i<myNotifications.length; i++) {
     myNotifications[i]= new notificationList(); 
   }
@@ -189,9 +193,6 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
   myNotifications[6].status = true;
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
-  for (int i=0; i<myNotifications.length; i++) {
-    getLogger().info(myNotifications[i].type + " is " + myNotifications[i].status); 
-  }
  }
   
  /*
