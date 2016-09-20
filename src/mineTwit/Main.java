@@ -125,11 +125,9 @@ public class Main extends JavaPlugin implements Listener {
     } */
   }
   
-//TODO Sort this out
-//public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args, notificationList myNotifications[]) {   
+//TODO Sort this out  
 @Override
 public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {    
-    getLogger().info("I've recognised some form of command");
     if (cmd.getName().equalsIgnoreCase("setNotification")) { 
       getLogger().info("I've recognised a setNotification command");
       // Check a correct number of arguments
@@ -141,25 +139,31 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
             return false;
         } else {
       // output label to check it's OK
-      sender.sendMessage("label is " + label); 
-      sender.sendMessage("args[0] is " + args[0]);
-      sender.sendMessage("args[1] is " + args[1]);      
-      sender.sendMessage("Sent by " + sender);
+      // sender.sendMessage("label is " + label); 
+      // sender.sendMessage("args[0] is " + args[0]);
+      // sender.sendMessage("args[1] is " + args[1]);      
+      // sender.sendMessage("Sent by " + sender);
       // Check first argument is a valid command
       for (int i=0; i<myNotifications.length; i++) {
         if (myNotifications[i].type.equals(args[0])) {
           sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
+          // Check second argument is valid boolean
           if (args[1].equalsIgnoreCase("false")) {
-            // Switch it off          
-          } 
-        } else {
-          sender.sendMessage("Not a match");
+            // Switch it off  
+            return true;
+          } else if (args[1].equalsIgnoreCase("true")) {
+            // Switch it on 
+            return true;
+          } else {
+            sender.sendMessage("Status needs to be true or false");
+            return false;
+          }
         }
       }
-      // Check second argument is valid boolean
-      return true;}
+      // Loop found no matching type
+      sender.sendMessage("Not a valid notification type");   
+      return false;}
     } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
-      getLogger().info("I've recognised a listNotification command");
       for (int i=0; i<myNotifications.length; i++) {
         sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
       }
