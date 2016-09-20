@@ -128,31 +128,28 @@ public class Main extends JavaPlugin implements Listener {
 //TODO Sort this out  
 @Override
 public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {    
-    if (cmd.getName().equalsIgnoreCase("setNotification")) { 
-      getLogger().info("I've recognised a setNotification command");
-      // Check a correct number of arguments
-      if (args.length < 2) {
-        sender.sendMessage("This needs two arguments!");
-            return false;
-        } else if (args.length >2) {
-          sender.sendMessage("Calm down, too many arguments!");
-            return false;
-        } else {
-      // output label to check it's OK
-      // sender.sendMessage("label is " + label); 
-      // sender.sendMessage("args[0] is " + args[0]);
-      // sender.sendMessage("args[1] is " + args[1]);      
-      // sender.sendMessage("Sent by " + sender);
+  if (cmd.getName().equalsIgnoreCase("setNotification")) { 
+    getLogger().info("I've recognised a setNotification command");
+    // Check a correct number of arguments
+    if (args.length < 2) {
+      sender.sendMessage("This needs two arguments!");
+      return false;
+    } else if (args.length >2) {
+      sender.sendMessage("Calm down, too many arguments!");
+      return false;
+    } else {
       // Check first argument is a valid command
       for (int i=0; i<myNotifications.length; i++) {
         if (myNotifications[i].type.equals(args[0])) {
           sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
           // Check second argument is valid boolean
           if (args[1].equalsIgnoreCase("false")) {
-            // Switch it off  
+            // Switch it off 
+            myNotifications[i].status = false;
             return true;
           } else if (args[1].equalsIgnoreCase("true")) {
             // Switch it on 
+            myNotifications[i].status = true;
             return true;
           } else {
             sender.sendMessage("Status needs to be true or false");
@@ -162,17 +159,18 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
       }
       // Loop found no matching type
       sender.sendMessage("Not a valid notification type");   
-      return false;}
-    } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
-      for (int i=0; i<myNotifications.length; i++) {
-        sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
-      }
-      return true;
-    } else {
-      getLogger().info("Gibberish or a typo, either way it ain't happening");
-    return false; 
+      return false;
     }
+  } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
+    for (int i=0; i<myNotifications.length; i++) {
+      sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
+    }
+    return true;
+  } else {
+    getLogger().info("Gibberish or a typo, either way it ain't happening");
+    return false; 
   }
+}
     
  private void initialiseNotifications() {
   for (int i=0; i<myNotifications.length; i++) {
