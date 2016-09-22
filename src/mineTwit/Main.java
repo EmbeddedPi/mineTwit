@@ -21,22 +21,22 @@ import twitter4j.auth.AccessToken;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
-//import org.bukkit.event.block.BlockPlaceEvent;
-//import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-//import org.bukkit.event.player.PlayerFishEvent;
-//import org.bukkit.event.player.PlayerKickEvent;
-//import org.bukkit.event.player.PlayerTeleportEvent;
-//import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.Location;
-//import org.bukkit.Material;
-//import org.bukkit.block.Block;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-//import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.LivingEntity;
 
 public class Main extends JavaPlugin implements Listener {
@@ -93,7 +93,7 @@ public class Main extends JavaPlugin implements Listener {
   
   @EventHandler
   public void onLogin(PlayerJoinEvent event) throws Exception {
-    // if (myNotifications[0].status) {
+    if (myNotifications[0].status) {
       recentJoin = true;
       recentPlayer = event.getPlayer().getName();
       recentPlayerIP = event.getPlayer().getAddress().getHostString();
@@ -103,14 +103,14 @@ public class Main extends JavaPlugin implements Listener {
       getLogger().info(locationMessage);
       updateStatus(twitter, recentPlayer + " flew in." + localMessage + "\n" + locationMessage);
       localMessage = "";
-    /* } else {
+    } else {
       return;
-    } */
+    } 
   }
   
   @EventHandler
   public void onLogout (PlayerQuitEvent event) throws Exception {
-    // if (myNotifications[0].status) {
+    if (myNotifications[0].status) {
       recentJoin = false;
       recentPlayer = event.getPlayer().getName();
       recentPlayerIP = event.getPlayer().getAddress().getHostString();
@@ -120,57 +120,56 @@ public class Main extends JavaPlugin implements Listener {
       getLogger().info(locationMessage);
       updateStatus(twitter, recentPlayer + " flew away." + localMessage + "\n" + locationMessage);
       localMessage = "";
-    /*  else {
-      return;
-    } */
-  }
-  
-//TODO Sort this out  
-@Override
-public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {    
-  if (cmd.getName().equalsIgnoreCase("setNotification")) { 
-    getLogger().info("I've recognised a setNotification command");
-    // Check a correct number of arguments
-    if (args.length < 2) {
-      sender.sendMessage("This needs two arguments!");
-      return false;
-    } else if (args.length >2) {
-      sender.sendMessage("Calm down, too many arguments!");
-      return false;
     } else {
-      // Check first argument is a valid command
-      for (int i=0; i<myNotifications.length; i++) {
-        if (myNotifications[i].type.equals(args[0])) {
-          sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
-          // Check second argument is valid boolean
-          if (args[1].equalsIgnoreCase("false")) {
-            // Switch it off 
-            myNotifications[i].status = false;
-            return true;
-          } else if (args[1].equalsIgnoreCase("true")) {
-            // Switch it on 
-            myNotifications[i].status = true;
-            return true;
-          } else {
-            sender.sendMessage("Status needs to be true or false");
-            return false;
+      return;
+    } 
+  }
+   
+  @Override
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {    
+    if (cmd.getName().equalsIgnoreCase("setNotification")) { 
+      getLogger().info("I've recognised a setNotification command");
+      // Check a correct number of arguments
+      if (args.length < 2) {
+        sender.sendMessage("This needs two arguments!");
+        return false;
+      } else if (args.length >2) {
+        sender.sendMessage("Calm down, too many arguments!");
+        return false;
+      } else {
+        // Check first argument is a valid command
+        for (int i=0; i<myNotifications.length; i++) {
+          if (myNotifications[i].type.equals(args[0])) {
+            sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
+            // Check second argument is valid boolean
+            if (args[1].equalsIgnoreCase("false")) {
+              // Switch it off 
+              myNotifications[i].status = false;
+              return true;
+            } else if (args[1].equalsIgnoreCase("true")) {
+              // Switch it on 
+              myNotifications[i].status = true;
+              return true;
+            } else {
+              sender.sendMessage("Status needs to be true or false");
+              return false;
+            }
           }
         }
+        // Loop found no matching type
+        sender.sendMessage("Not a valid notification type");   
+        return false;
       }
-      // Loop found no matching type
-      sender.sendMessage("Not a valid notification type");   
-      return false;
-    }
-  } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
-    for (int i=0; i<myNotifications.length; i++) {
-      sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
-    }
-    return true;
-  } else {
-    getLogger().info("Gibberish or a typo, either way it ain't happening");
-    return false; 
+    } else if (cmd.getName().equalsIgnoreCase("listNotification")) {
+      for (int i=0; i<myNotifications.length; i++) {
+        sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
+      }
+      return true;
+    } else {
+      getLogger().info("Gibberish or a typo, either way it ain't happening");
+      return false; 
+        }
   }
-}
     
  private void initialiseNotifications() {
   for (int i=0; i<myNotifications.length; i++) {
@@ -197,18 +196,17 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
   myNotifications[7].status = true;
  }
   
- /*
   @EventHandler
   public void onBlockPlace(BlockPlaceEvent event) {
-    // if (myNotifications[1].status) {
+    if (myNotifications[1].status) {
       Player player = event.getPlayer();
       Block block = event.getBlock();
       Material mat = block.getType();
       // Tweet who placed which block.
       updateStatus(twitter, player.getName() + " placed a block of " + mat.toString().toLowerCase() + ".");
-    // } else {
-    //  return;
-    // } 
+    } else {  
+      return;
+    } 
   }
   
   @EventHandler
@@ -220,24 +218,22 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
         final Player player = (Player)event.getEntity();
         updateStatus(twitter, player.getName() + " kicked the bucket.");
       }
-     } else {
+    } else {
       return;
     } 
   }
- */
   
   @EventHandler
   public void onEntityTame (final EntityTameEvent event) {
-    // if (myNotifications[3].status) {
+    if (myNotifications[3].status) {
       final Player player = (Player)event.getOwner();
       final LivingEntity entity = (LivingEntity)event.getEntity();
       updateStatus(twitter, player.getName() + " tamed a " + entity.getCustomName());
-    //} else {
-    //  return;
-    //}
+    } else {
+      return;
+    }
   }
   
-  /*
   @EventHandler
   public void onFishing (final PlayerFishEvent event) {
     if (myNotifications[4].status) {
@@ -286,7 +282,6 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
       return;
     }
   }
-  */
   
   private String setLocalMessage (boolean recentJoin) {
     if (isLocal(recentPlayerIP)) {
@@ -348,6 +343,7 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
     return locationString;
   }
   
+  //TODO Add handling of duplicates
   private Twitter setupTwitter() throws TwitterException {
     if (TWITTER_CONFIGURED) {
       TwitterFactory factory = new TwitterFactory();
