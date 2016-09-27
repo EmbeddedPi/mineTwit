@@ -17,6 +17,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
+import twitter4j.ResponseList;
+import twitter4j.Status;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
@@ -46,6 +48,7 @@ public class Main extends JavaPlugin implements Listener {
   private String recentPlayerIP = "";
   private Location recentPlayerLocation;
   private String locationMessage = "";
+  private String currentMessage;
   private boolean recentJoin = false;
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
   private static final String entryMessage = "Server's up, time to get crafting!";
@@ -60,7 +63,7 @@ public class Main extends JavaPlugin implements Listener {
     String type;
     boolean status;
   }
-  notificationList[] myNotifications = new notificationList[8]; 
+  notificationList[] myNotifications = new notificationList[9]; 
   
   @Override
   public void onEnable() {
@@ -179,8 +182,8 @@ public class Main extends JavaPlugin implements Listener {
   getLogger().info("I'm setting the array I is");
   myNotifications[0].type = "loggingInOut";
   myNotifications[0].status = true;
+  //Set to false as will overload twitter update limits if building
   myNotifications[1].type= "blockPlacing";
-  // Set to false as will overload twitter update limits if building
   myNotifications[1].status = false;
   myNotifications[2].type= "dying";
   myNotifications[2].status = true;
@@ -194,6 +197,9 @@ public class Main extends JavaPlugin implements Listener {
   myNotifications[6].status = true;
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
+  // Can help with stopping hitting overload limits by not repeating the same tweet as the last one
+  myNotifications[7].type= "duplicates"; 
+  myNotifications[7].status = false;
  }
   
   @EventHandler
@@ -343,13 +349,14 @@ public class Main extends JavaPlugin implements Listener {
     return locationString;
   }
   
-  //TODO Add handling of duplicates
   private Twitter setupTwitter() throws TwitterException {
     if (TWITTER_CONFIGURED) {
       TwitterFactory factory = new TwitterFactory();
       final Twitter twitter = factory.getInstance();
       AccessToken accessToken = loadAccessToken();
       authenticateTwitter(accessToken, twitter);
+      currentMessage = getCurrentStatus(twitter);
+      getLogger().info("Current status = " + currentMessage);
       return twitter;
     }
     else {
@@ -358,15 +365,25 @@ public class Main extends JavaPlugin implements Listener {
     return null;
   }
 
-  private void updateStatus(Twitter twitter, String testMessage) {
+  //TODO Add handling of duplicates
+  private void updateStatus(Twitter twitter, String newMessage) {
     if (twitter != null) {
+      // Check newMessage
       try {
-        twitter.updateStatus(testMessage + "\n" + new Date());
+        if (!myNotifications[7].status || !newMessage.equals(getCurrentStatus(twitter))) {
+          twitter.updateStatus(newMessage + "\n" + new Date());
+        } 
       } catch (TwitterException e) {
         getLogger().info("Twitter is broken because of " + e);
         throw new RuntimeException(e);
       }
     }
+  }
+  
+  private String getCurrentStatus (Twitter twitter) throws TwitterException {
+    ResponseList<Status> homeTimeLine = twitter.getHomeTimeline();
+    String text = homeTimeLine.get(0).getText();
+    return text;
   }
   
   private static void authenticateTwitter(AccessToken accessToken, Twitter twitter) {
