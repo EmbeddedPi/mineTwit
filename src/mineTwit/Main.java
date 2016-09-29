@@ -198,8 +198,8 @@ public class Main extends JavaPlugin implements Listener {
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
   // Can help with stopping hitting overload limits by not repeating the same tweet as the last one
-  myNotifications[7].type= "duplicates"; 
-  myNotifications[7].status = false;
+  myNotifications[8].type= "duplicates"; 
+  myNotifications[8].status = false;
  }
   
   @EventHandler
@@ -365,12 +365,11 @@ public class Main extends JavaPlugin implements Listener {
     return null;
   }
 
-  //TODO Add handling of duplicates
   private void updateStatus(Twitter twitter, String newMessage) {
     if (twitter != null) {
       // Check newMessage
       try {
-        if (!myNotifications[7].status || !newMessage.equals(getCurrentStatus(twitter))) {
+        if (!myNotifications[8].status || !newMessage.equals(getCurrentStatus(twitter))) {
           twitter.updateStatus(newMessage + "\n" + new Date());
         } 
       } catch (TwitterException e) {
