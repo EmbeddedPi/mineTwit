@@ -69,6 +69,8 @@ public class Main extends JavaPlugin implements Listener {
   public void onEnable() {
     // Register listener
     getServer().getPluginManager().registerEvents(this, this);
+    //Set up notifications
+    initialiseNotifications();
     // Set up Twitter
     try {
       twitter = setupTwitter();
@@ -78,7 +80,6 @@ public class Main extends JavaPlugin implements Listener {
       } finally {
       getLogger().info("mineTwit goes tweet tweet");
       }
-    initialiseNotifications();
   }
   
   @Override
@@ -379,6 +380,8 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
   
+  
+  //TODO Includes retweets from followers
   private String getCurrentStatus (Twitter twitter) throws TwitterException {
     ResponseList<Status> homeTimeLine = twitter.getHomeTimeline();
     String text = homeTimeLine.get(0).getText();
