@@ -366,6 +366,7 @@ public class Main extends JavaPlugin implements Listener {
     return null;
   }
 
+  //TODO Fix handling of duplicates
   private void updateStatus(Twitter twitter, String newMessage) {
     if (twitter != null) {
       // Check newMessage
@@ -379,7 +380,6 @@ public class Main extends JavaPlugin implements Listener {
       }
     }
   }
-  
   
   //TODO Includes retweets from followers
   private String getCurrentStatus (Twitter twitter) throws TwitterException {
