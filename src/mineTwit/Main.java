@@ -13,6 +13,7 @@ package mineTwit;
 
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.Map;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -372,10 +373,15 @@ public class Main extends JavaPlugin implements Listener {
       // Check newMessage
       try {        
         // Debug code to check twitter rate limits
-        //RateLimitStatus rateLimit = (RateLimitStatus) twitter.getRateLimitStatus();
-        //getLogger().info("getRemaining is " + rateLimit.getRemaining());
-        //getLogger().info("getSecondsUntilReset is " + rateLimit.getSecondsUntilReset());
-        //getLogger().info("getLimit is " + rateLimit.getLimit());
+        Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
+        for (String endpoint : rateLimit.keySet()) {
+          RateLimitStatus status = rateLimit.get(endpoint);
+          System.out.println("Endpoint: " + endpoint);
+          System.out.println(" Limit: " + status.getLimit());
+          System.out.println(" Remaining: " + status.getRemaining());
+          // System.out.println(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
+          System.out.println(" SecondsUntilReset: " + status.getSecondsUntilReset());
+        }
         boolean rateLimited = false;
         if (!myNotifications[8].status || !newMessage.equals(getCurrentStatus(twitter)) || !rateLimited) {
           twitter.updateStatus(newMessage + "\n" + new Date());
