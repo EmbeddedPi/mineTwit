@@ -20,7 +20,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.ResponseList;
 import twitter4j.Status;
-import twitter4j.RateLimitStatus;
+//import twitter4j.RateLimitStatus;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
@@ -373,10 +373,10 @@ public class Main extends JavaPlugin implements Listener {
       // Check newMessage
       try {        
         // Debug code to check twitter rate limits
-        RateLimitStatus rateLimit = (RateLimitStatus) twitter.getRateLimitStatus();
-        getLogger().info("getRemaining is " + rateLimit.getRemaining());
-        getLogger().info("getSecondsUntilReset is " + rateLimit.getSecondsUntilReset());
-        getLogger().info("getLimit is " + rateLimit.getLimit());
+        //RateLimitStatus rateLimit = (RateLimitStatus) twitter.getRateLimitStatus();
+        //getLogger().info("getRemaining is " + rateLimit.getRemaining());
+        //getLogger().info("getSecondsUntilReset is " + rateLimit.getSecondsUntilReset());
+        //getLogger().info("getLimit is " + rateLimit.getLimit());
         boolean rateLimited = false;
         if (!myNotifications[8].status || !newMessage.equals(getCurrentStatus(twitter)) || !rateLimited) {
           twitter.updateStatus(newMessage + "\n" + new Date());
