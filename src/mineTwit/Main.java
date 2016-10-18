@@ -13,12 +13,14 @@ package mineTwit;
 
 import java.text.DecimalFormat;
 import java.util.Date;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.RateLimitStatus;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
@@ -342,8 +344,7 @@ public class Main extends JavaPlugin implements Listener {
     if (exemption) {
       locationString = recentPlayer + " is sneaky and can't be seen!";
       getLogger().info(recentPlayer + " is exempt from co-ord display");
-    }
-    else {
+    } else {
       locationString = "X: " + playerLocation[0] + " Y: " + playerLocation[1] + " Z: " + playerLocation[2];
       getLogger().info(recentPlayer + " is not exempt from co-ord display");
     }
@@ -359,19 +360,25 @@ public class Main extends JavaPlugin implements Listener {
       currentMessage = getCurrentStatus(twitter);
       getLogger().info("Current status = " + currentMessage);
       return twitter;
-    }
-    else {
+    } else {
       getLogger().info("Twitter is switched off you doughnut.");
+      return null;
     }
-    return null;
   }
+  
 
-  //TODO Fix handling of duplicates
+  //TODO Test handling of duplicates
   private void updateStatus(Twitter twitter, String newMessage) {
     if (twitter != null) {
       // Check newMessage
-      try {
-        if (!myNotifications[8].status || !newMessage.equals(getCurrentStatus(twitter))) {
+      try {        
+        // Debug code to check twitter rate limits
+        RateLimitStatus rateLimit = (RateLimitStatus) twitter.getRateLimitStatus();
+        getLogger().info("getRemaining is " + rateLimit.getRemaining());
+        getLogger().info("getSecondsUntilReset is " + rateLimit.getSecondsUntilReset());
+        getLogger().info("getLimit is " + rateLimit.getLimit());
+        boolean rateLimited = false;
+        if (!myNotifications[8].status || !newMessage.equals(getCurrentStatus(twitter)) || !rateLimited) {
           twitter.updateStatus(newMessage + "\n" + new Date());
         } 
       } catch (TwitterException e) {
@@ -383,8 +390,8 @@ public class Main extends JavaPlugin implements Listener {
   
   //TODO Includes retweets from followers
   private String getCurrentStatus (Twitter twitter) throws TwitterException {
-    ResponseList<Status> homeTimeLine = twitter.getHomeTimeline();
-    String text = homeTimeLine.get(0).getText();
+    ResponseList<Status> userTimeLine = twitter.getUserTimeline();
+    String text = userTimeLine.get(0).getText();
     return text;
   }
   
