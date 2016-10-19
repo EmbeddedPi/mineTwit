@@ -377,7 +377,7 @@ public class Main extends JavaPlugin implements Listener {
         for (String endpoint : rateLimit.keySet()) {
           RateLimitStatus status = rateLimit.get(endpoint);
           System.out.println("Endpoint: " + endpoint);
-          System.out.println(" Limit: " + status.getLimit());
+          //System.out.println(" Limit: " + status.getLimit());
           System.out.println(" Remaining: " + status.getRemaining());
           // System.out.println(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
           System.out.println(" SecondsUntilReset: " + status.getSecondsUntilReset());
