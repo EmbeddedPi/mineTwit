@@ -54,8 +54,8 @@ public class Main extends JavaPlugin implements Listener {
   private String currentMessage;
   private boolean recentJoin = false;
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
-  private static final String entryMessage = "Server's up, time to get crafting!";
-  private static final String exitMessage = "The server has joined the choir invisibule.";
+  private static final String entryMessage = "Server's up, time to get crafting!\n";
+  private static final String exitMessage = "The server has joined the choir invisibule.\n";
   private static final boolean TWITTER_CONFIGURED = false;
   private static final String API_KEY = "XXXX";
   private static final String API_SECRET = "YYYY";
@@ -146,7 +146,7 @@ public class Main extends JavaPlugin implements Listener {
       } else {
         // Check first argument is a valid command
         for (int i=0; i<myNotifications.length; i++) {
-          if (myNotifications[i].type.equals(args[0])) {
+          if (myNotifications[i].type.equalsIgnoreCase(args[0])) {
             sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
             // Check second argument is valid boolean
             if (args[1].equalsIgnoreCase("false")) {
@@ -183,7 +183,7 @@ public class Main extends JavaPlugin implements Listener {
     myNotifications[i]= new notificationList(); 
   }
   // Set defaults
-  getLogger().info("I'm setting the array I is");
+  // getLogger().info("I'm setting the array I is");
   myNotifications[0].type = "loggingInOut";
   myNotifications[0].status = true;
   //Set to false as will overload twitter update limits if building
@@ -201,8 +201,11 @@ public class Main extends JavaPlugin implements Listener {
   myNotifications[6].status = true;
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
-  // Can help with stopping hitting overload limits by not repeating the same tweet as the last one
-  myNotifications[8].type= "duplicates"; 
+  /* Can help with stopping hitting twitter duplicate restrictions by
+   * not repeating the same tweet as the last one.
+   * Default of false will ignore and not tweet duplicate messages
+   */
+  myNotifications[8].type= "duplicate"; 
   myNotifications[8].status = false;
  }
   
@@ -359,7 +362,8 @@ public class Main extends JavaPlugin implements Listener {
       AccessToken accessToken = loadAccessToken();
       authenticateTwitter(accessToken, twitter);
       currentMessage = getCurrentStatus(twitter);
-      getLogger().info("Current status = " + currentMessage);
+      getLogger().info("Twitter is enabled.");
+      getLogger().info("Last message was - " + currentMessage);
       return twitter;
     } else {
       getLogger().info("Twitter is switched off you doughnut.");
@@ -376,16 +380,36 @@ public class Main extends JavaPlugin implements Listener {
         Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
         for (String endpoint : rateLimit.keySet()) {
           RateLimitStatus status = rateLimit.get(endpoint);
+          //Test line to remove later
+          //System.out.println("Got rateLimits.endpoints");
+          //Omit any endpoints that haven't moved from default limit
+          if (status.getRemaining() != status.getLimit()) {
           System.out.println("Endpoint: " + endpoint);
-          //System.out.println(" Limit: " + status.getLimit());
+          // System.out.println(" Limit: " + status.getLimit());
           System.out.println(" Remaining: " + status.getRemaining());
           // System.out.println(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
           System.out.println(" SecondsUntilReset: " + status.getSecondsUntilReset());
+          }
         }
         boolean rateLimited = false;
-        if (!myNotifications[8].status || !newMessage.equals(getCurrentStatus(twitter)) || !rateLimited) {
-          twitter.updateStatus(newMessage + "\n" + new Date());
-        } 
+        //Test line for debugging
+        System.out.println(" Duplicate Array value is : " + myNotifications[8].status);
+        // Check if rateLimited by any particular endpoint.
+        if (!rateLimited) {
+          //Tweet if duplicates are off AND not duplicate AND not rate limited
+          if (myNotifications[8].status) {
+            System.out.println("Duplicates are true.\n Who cares what the new message is.");
+            twitter.updateStatus(newMessage + "\n" + new Date());
+            // Tweet anyway if duplicates are on AND not ratelimited
+          } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
+            System.out.println("Duplicates are false.\nNew is " +newMessage + "\ncurrent is " + getCurrentStatus(twitter));
+            twitter.updateStatus(newMessage + "\n" + new Date());
+          } else {
+            System.out.println("Duplicates are false and message is duplicate");
+          }
+        } else {
+          System.out.println("Twitter is rate limited, not tweeting");
+        }
       } catch (TwitterException e) {
         getLogger().info("Twitter is broken because of " + e);
         throw new RuntimeException(e);
@@ -393,11 +417,15 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
   
-  //TODO Includes retweets from followers
   private String getCurrentStatus (Twitter twitter) throws TwitterException {
+    // Gets last user tweet from timeline.
     ResponseList<Status> userTimeLine = twitter.getUserTimeline();
-    String text = userTimeLine.get(0).getText();
-    return text;
+    //Split of first line.
+    String timeLine = userTimeLine.get(0).getText();
+    //Probably failed attempt to get just the first line. Please delete me let me go....
+    //String lines[] = timeLine.split("\n");
+    //String text = lines[0];
+    return timeLine;
   }
   
   private static void authenticateTwitter(AccessToken accessToken, Twitter twitter) {
