@@ -381,34 +381,36 @@ public class Main extends JavaPlugin implements Listener {
         for (String endpoint : rateLimit.keySet()) {
           RateLimitStatus status = rateLimit.get(endpoint);
           //Test line to remove later
-          //System.out.println("Got rateLimits.endpoints");
+          //getLogger().info("Got rateLimits.endpoints");
           //Omit any endpoints that haven't moved from default limit
           if (status.getRemaining() != status.getLimit()) {
-          System.out.println("Endpoint: " + endpoint);
-          // System.out.println(" Limit: " + status.getLimit());
-          System.out.println(" Remaining: " + status.getRemaining());
-          // System.out.println(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
-          System.out.println(" SecondsUntilReset: " + status.getSecondsUntilReset());
+            getLogger().info("Endpoint: " + endpoint);
+          // getLogger().info(" Limit: " + status.getLimit());
+            getLogger().info(" Remaining: " + status.getRemaining());
+          // getLogger().info(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
+            getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
           }
         }
         boolean rateLimited = false;
         //Test line for debugging
-        System.out.println(" Duplicate Array value is : " + myNotifications[8].status);
+        getLogger().info(" Duplicate Array value is : " + myNotifications[8].status);
         // Check if rateLimited by any particular endpoint.
         if (!rateLimited) {
           //Tweet if duplicates are off AND not duplicate AND not rate limited
           if (myNotifications[8].status) {
-            System.out.println("Duplicates are true.\n Who cares what the new message is.");
+            getLogger().info("Duplicates are true.\n Who cares what the new message is.");
             twitter.updateStatus(newMessage + "\n" + new Date());
             // Tweet anyway if duplicates are on AND not ratelimited
           } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
-            System.out.println("Duplicates are false.\nNew is " +newMessage + "\ncurrent is " + getCurrentStatus(twitter));
+            getLogger().info("Duplicates are false.");
+            getLogger().info("New is " + newMessage);
+            getLogger().info("Current is " + getCurrentStatus(twitter));
             twitter.updateStatus(newMessage + "\n" + new Date());
           } else {
-            System.out.println("Duplicates are false and message is duplicate");
+            getLogger().info("Duplicates are false and message is duplicate");
           }
         } else {
-          System.out.println("Twitter is rate limited, not tweeting");
+          getLogger().info("Twitter is rate limited, not tweeting");
         }
       } catch (TwitterException e) {
         getLogger().info("Twitter is broken because of " + e);
