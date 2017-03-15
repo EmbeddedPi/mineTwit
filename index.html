@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>mineTwit by EmbeddedPi</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>mineTwit</h1>
+        <p>A RaspberryPi based Twitter notification for minecraft servers (Java). <BR><BR>
+
+        <ul>
+          <li><a href="https://github.com/EmbeddedPi/mineTwit/releases">Releases <strong>Jar File</strong></a></li>
+		  <li><a href="https://github.com/EmbeddedPi/mineTwit/zipball/master">Source code <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/EmbeddedPi/mineTwit">Project<strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#Overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h3>
+
+<p>mineTwit/udpServerLED is a Twitter based minecraft server notification system. You will need a Minecraft server running this plugin and a Twitter account with this application registered. </p>
+<p align="center"><b>System overview of both parts.</b><img src="images/mineTwit.jpg" width="512"></p>
+<p> udpServerLED is a standalone java application that runs on a RaspberryPi. mineTwit runs as a standard Minecraft plugin on your Minecraft server. </p>
+<p>The rest of this guide refers to the client side running on the PC which is running the Minecraft server.</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#userguide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use</h3>
+
+<p>If you are not interested in playing with the code then just download the latest .jar file from the releases link.
+After downloading, copy it to your minecraft server plugins folder and follow the hardware guide for the raspberryPi part on the udpServerLED link.</p>
+<p>Upon first run the plugin will write a config.yml to its subdirectory in your plugins folder. You will need to change the IP address to the one used by your RaspberryPi. This can be done in one of 2 ways.
+<UL>Edit the file directly then either restart the server or use the command (must be OP level) <p align="center"><b>updateUDPConfig</b></p></UL>
+<UL>Use the console command <br><p align="center"><b>setUDPIPAddress [IPAdress]</b></p></UL>
+The server must be running on the RaspberryPi first for this change to work. If the IP address given is not valid then the plugin will revert back to the default.<p>
+<p> If you want to play with the source code then download the whole project from the links on the left. It was built in Eclipse using the Maven framework.</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#userguide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Detailed configuration</h3>
+
+<p>The plugin has 3 parameters that can all be controlled by the either editing the config.yml file or console commands as described below.</p>
+<UL><b>setUDPIPAdress [IPAddress]</b>, sets the IP Address of the RasberryPi where the udpServerLED application is running. Default 127.0.0.1. New value will be ignored if not valid for the network. If the target is valid and reachable but not running, the udpServerLED the user will be warned but the parameter will still be set.</UL>
+<UL><b>setUDPTimeout [milliseconds]</b>, sets length of time the plugin will wait for a reply from a newly defined server before giving up. Default 5000 or 5 seconds. If negative or non-integer the new value will be ignored.</UL>
+<UL><b>setUDPShortTimeout [milliseconds]</b>, sets length of time the plugin will wait for a reply from a previously known good server. Default 500 or 0.5 seconds. If negative or non-integer the new value will be ignored.</UL>
+<UL><b>listUDPConfig</b>, shows current status of 3 parameters above.</UL>
+<UL><b>updateUDPConfig</b>, attempts to load new parameters from config.yml after it has been manuaal edited. If the new parameters are not valid then the the plugin reverts to the previous ones. </UL>
+<p>It should be noted that restarting the server after manually editing config.yml will have broadly the same effect except that in the case of an error it will revert to the defaults not the last known good value. For this reason it is recommended to either use the console commands to change parameters or use <b>updateUDPConfig</b> if manually editing.</p>
+
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>I wrote this, it's my first proper code for well over twenty years (Excel macros notwithstanding) and probably the same for electronics that wasn't work related. Any sugestions for improvements to the code are welcome, contact me on GitHub. It's been fun perhaps with the exception of my woeful attempts to understand Git merges!</p>
+
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/EmbeddedPi">EmbeddedPi</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
