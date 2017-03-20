@@ -1,0 +1,12 @@
+# ----------------------------------------------------
+# This config holds the Twitter configuration of the 
+# server.
+# Edit to set Twitter as live and then either reload
+# or run updateConfig after altering to update settings
+# ----------------------------------------------------
+Twitter:
+  TMP.TWITTER_CONFIGURED = false;
+  TMP.API_KEY = "XXXX";
+  TMP.API_SECRET = "YYYY";
+  TMP.token = "ZZZ";
+  TMP.secret = "ABABAB";
