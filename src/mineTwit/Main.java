@@ -87,10 +87,15 @@ public class Main extends JavaPlugin implements Listener {
     //Set up notifications
     //Remove this later as forces return to default upon load
     initialiseNotifications();
-    loadConfiguration();
+    twitterSettings = loadConfiguration();
+    getLogger().info("[onEnable][DEBUG]Status is " + twitterSettings.status);
+    getLogger().info("[onEnable][DEBUG]apiKey is " + twitterSettings.apiKey);
+    getLogger().info("[onEnable][DEBUG]apiSecret is " + twitterSettings.apiSecret);
+    getLogger().info("[onEnable][DEBUG]token is " + twitterSettings.token);
+    getLogger().info("[onEnable][DEBUG]secret is " + twitterSettings.secret);
     // Set up Twitter
     try {
-      twitter = setupTwitter();
+      twitter = setupTwitter(twitterSettings);
       updateStatus(twitter, entryMessage);
       } catch (TwitterException e) {
       getLogger().info("Twitter is broken because of " + e);
@@ -102,20 +107,24 @@ public class Main extends JavaPlugin implements Listener {
   @Override
   public void onDisable() {
     // Server down notification
+    updateStatus(twitter, exitMessage);
+    /*
     try {
-      twitter = setupTwitter();
+      twitter = setupTwitter(twitterSettings);
       updateStatus(twitter, exitMessage);
       } catch (TwitterException e) {
       getLogger().info("Twitter is broken because of " + e);
       } finally {
       getLogger().info("mineTwit has fallen off the perch");
-      }
+     }
+     */
   }
   
-  public void loadConfiguration() { 
+  public twitterSettings loadConfiguration() { 
     // Create virtual config file
     //getLogger().info("[loadConfiguration] is starting");
     File configFile = new File(getDataFolder(), "config.yml");
+    twitterSettings configSettings = new twitterSettings();
     /*
      * If this is the first time that plugin has run or config file not present
      * then copy from default config file.
@@ -125,31 +134,37 @@ public class Main extends JavaPlugin implements Listener {
       this.getConfig().options().copyDefaults(true);
       configFile.getParentFile().mkdirs();
       copy(getResource("config.yml"), configFile);
-      twitterSettings.status = this.getConfig().getBoolean("Twitter.TMP.TWITTER_CONFIGURED");
-      twitterSettings.apiKey = this.getConfig().getString("Twitter.TMP.API_KEY");
-      twitterSettings.apiSecret = this.getConfig().getString("Twitter.TMP.API_SECRET");
-      twitterSettings.token = this.getConfig().getString("Twitter.TMP.token");
-      twitterSettings.secret = this.getConfig().getString("Twitter.TMP.secret");
-      getLogger().info("Status is " + twitterSettings.status);
-      getLogger().info("apiKey is " + twitterSettings.apiKey);
-      getLogger().info("apiSecret is " + twitterSettings.apiSecret);
-      getLogger().info("token is " + twitterSettings.token);
-      getLogger().info("secret is " + twitterSettings.secret);
+      configSettings.status = this.getConfig().getBoolean("Twitter.TWITTER_CONFIGURED");
+      configSettings.apiKey = this.getConfig().getString("Twitter.API_KEY");
+      configSettings.apiSecret = this.getConfig().getString("Twitter.API_SECRET");
+      configSettings.token = this.getConfig().getString("Twitter.token");
+      configSettings.secret = this.getConfig().getString("Twitter.secret");
+      getLogger().info("Status is " + configSettings.status);
+      getLogger().info("apiKey is " + configSettings.apiKey);
+      getLogger().info("apiSecret is " + configSettings.apiSecret);
+      getLogger().info("token is " + configSettings.token);
+      getLogger().info("secret is " + configSettings.secret);
     } else {
       getLogger().info("[loadConfiguration]config file already exists");  
       //Read config file and assign values
       this.getConfig().options().copyDefaults(false);
-      twitterSettings.status = this.getConfig().getBoolean("Twitter.TMP.TWITTER_CONFIGURED");
-      twitterSettings.apiKey = this.getConfig().getString("Twitter.TMP.API_KEY");
-      twitterSettings.apiSecret = this.getConfig().getString("Twitter.TMP.API_SECRET");
-      twitterSettings.token = this.getConfig().getString("Twitter.TMP.token");
-      twitterSettings.secret = this.getConfig().getString("Twitter.TMP.secret");
-      getLogger().info("Status is " + twitterSettings.status);
-      getLogger().info("apiKey is " + twitterSettings.apiKey);
-      getLogger().info("apiSecret is " + twitterSettings.apiSecret);
-      getLogger().info("token is " + twitterSettings.token);
-      getLogger().info("secret is " + twitterSettings.secret);
+      configSettings.status = this.getConfig().getBoolean("Twitter.TWITTER_CONFIGURED");
+      configSettings.apiKey = this.getConfig().getString("Twitter.API_KEY");
+      configSettings.apiSecret = this.getConfig().getString("Twitter.API_SECRET");
+      configSettings.token = this.getConfig().getString("Twitter.token");
+      configSettings.secret = this.getConfig().getString("Twitter.secret");
+      getLogger().info("Status is " + configSettings.status);
+      getLogger().info("apiKey is " + configSettings.apiKey);
+      getLogger().info("apiSecret is " + configSettings.apiSecret);
+      getLogger().info("token is " + configSettings.token);
+      getLogger().info("secret is " + configSettings.secret);
     } 
+    getLogger().info("Status is " + configSettings.status);
+    getLogger().info("apiKey is " + configSettings.apiKey);
+    getLogger().info("apiSecret is " + configSettings.apiSecret);
+    getLogger().info("token is " + configSettings.token);
+    getLogger().info("secret is " + configSettings.secret);
+    return configSettings;
   }
   
   @EventHandler
@@ -425,7 +440,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 }
   
-  private Twitter setupTwitter() throws TwitterException {
+  private Twitter setupTwitter(twitterSettings setupSettings) throws TwitterException {
     if (TWITTER_CONFIGURED) {
       TwitterFactory factory = new TwitterFactory();
       final Twitter twitter = factory.getInstance();

@@ -5,8 +5,8 @@
 # or run updateConfig after altering to update settings
 # ----------------------------------------------------
 Twitter:
-  TMP.TWITTER_CONFIGURED = false;
-  TMP.API_KEY = "XXXX";
-  TMP.API_SECRET = "YYYY";
-  TMP.token = "ZZZ";
-  TMP.secret = "ABABAB";
+  TWITTER_CONFIGURED: false
+  API_KEY: XXXX
+  API_SECRET: YYYY
+  token: ZZZ
+  secret: ABABAB
