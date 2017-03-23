@@ -1,9 +1,9 @@
-# ----------------------------------------------------
+# --------------------------------------------------
 # This config holds the Twitter configuration of the 
-# server.
-# Edit to set Twitter as live and then either reload
-# or run updateConfig after altering to update settings
-# ----------------------------------------------------
+# server. Edit and start Twitter running by changing 
+# TWITTER_CONFIGURED to true and then either reload
+# plugin or run updateConfig to update settings.
+# --------------------------------------------------
 Twitter:
   TWITTER_CONFIGURED: false
   API_KEY: XXXX

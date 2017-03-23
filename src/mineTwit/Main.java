@@ -134,36 +134,40 @@ public class Main extends JavaPlugin implements Listener {
       this.getConfig().options().copyDefaults(true);
       configFile.getParentFile().mkdirs();
       copy(getResource("config.yml"), configFile);
+      //Assign variables directly as default dummy values
       configSettings.status = this.getConfig().getBoolean("Twitter.TWITTER_CONFIGURED");
       configSettings.apiKey = this.getConfig().getString("Twitter.API_KEY");
       configSettings.apiSecret = this.getConfig().getString("Twitter.API_SECRET");
       configSettings.token = this.getConfig().getString("Twitter.token");
       configSettings.secret = this.getConfig().getString("Twitter.secret");
-      getLogger().info("Status is " + configSettings.status);
-      getLogger().info("apiKey is " + configSettings.apiKey);
-      getLogger().info("apiSecret is " + configSettings.apiSecret);
-      getLogger().info("token is " + configSettings.token);
-      getLogger().info("secret is " + configSettings.secret);
     } else {
       getLogger().info("[loadConfiguration]config file already exists");  
       //Read config file and assign values
+      /*
+       * Look at handling
+       * org.bukkit.configuration.InvalidConfigurationException
+       * as this resets all value if any string one has errors
+       * Boolean values are fine
+       */
       this.getConfig().options().copyDefaults(false);
       configSettings.status = this.getConfig().getBoolean("Twitter.TWITTER_CONFIGURED");
       configSettings.apiKey = this.getConfig().getString("Twitter.API_KEY");
       configSettings.apiSecret = this.getConfig().getString("Twitter.API_SECRET");
       configSettings.token = this.getConfig().getString("Twitter.token");
       configSettings.secret = this.getConfig().getString("Twitter.secret");
-      getLogger().info("Status is " + configSettings.status);
-      getLogger().info("apiKey is " + configSettings.apiKey);
-      getLogger().info("apiSecret is " + configSettings.apiSecret);
-      getLogger().info("token is " + configSettings.token);
-      getLogger().info("secret is " + configSettings.secret);
     } 
-    getLogger().info("Status is " + configSettings.status);
-    getLogger().info("apiKey is " + configSettings.apiKey);
-    getLogger().info("apiSecret is " + configSettings.apiSecret);
-    getLogger().info("token is " + configSettings.token);
-    getLogger().info("secret is " + configSettings.secret);
+    getLogger().info("[loadConfiguration][DEBUG]Status is " + configSettings.status);
+    getLogger().info("[loadConfiguration][DEBUG]apiKey is " + configSettings.apiKey);
+    getLogger().info("[loadConfiguration][DEBUG]apiSecret is " + configSettings.apiSecret);
+    getLogger().info("[loadConfiguration][DEBUG]token is " + configSettings.token);
+    getLogger().info("[loadConfiguration][DEBUG]secret is " + configSettings.secret);
+    //Write back to file to catch any invalid parameters reset back to default
+    this.getConfig().set("Twitter.TWITTER_CONFIGURED", configSettings.status);
+    this.getConfig().set("Twitter.API_KEY", configSettings.apiKey);
+    this.getConfig().set("Twitter.API_SECRET", configSettings.apiSecret);
+    this.getConfig().set("Twitter.token", configSettings.token);
+    this.getConfig().set("Twitter.secret", configSettings.secret); 
+    saveConfig();
     return configSettings;
   }
   
