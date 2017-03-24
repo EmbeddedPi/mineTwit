@@ -61,10 +61,10 @@ public class Main extends JavaPlugin implements Listener {
   private static final String entryMessage = "Server's up, time to get crafting!\n";
   private static final String exitMessage = "The server has joined the choir invisibule.\n";
   private static final boolean TWITTER_CONFIGURED = false;
-  private static final String API_KEY = "XXXX";
-  private static final String API_SECRET = "YYYY";
-  private static final String token = "ZZZ";
-  private static final String secret = "ABABAB";
+  //private static final String API_KEY = "XXXX";
+  //private static final String API_SECRET = "YYYY";
+  //private static final String token = "ZZZ";
+  //private static final String secret = "ABABAB";
   private static Twitter twitter;
   private class twitterSettings {
     boolean status;
@@ -445,11 +445,16 @@ public class Main extends JavaPlugin implements Listener {
 }
   
   private Twitter setupTwitter(twitterSettings setupSettings) throws TwitterException {
+    getLogger().info("[setupTwitter][DEBUG]Status is " + twitterSettings.status);
+    getLogger().info("[setupTwitter][DEBUG]apiKey is " + twitterSettings.apiKey);
+    getLogger().info("[setupTwitter][DEBUG]apiSecret is " + twitterSettings.apiSecret);
+    getLogger().info("[setupTwitter][DEBUG]token is " + twitterSettings.token);
+    getLogger().info("[setupTwitter][DEBUG]secret is " + twitterSettings.secret);
     if (TWITTER_CONFIGURED) {
       TwitterFactory factory = new TwitterFactory();
       final Twitter twitter = factory.getInstance();
-      AccessToken accessToken = loadAccessToken();
-      authenticateTwitter(accessToken, twitter);
+      AccessToken accessToken = loadAccessToken(setupSettings.token, setupSettings.secret);
+      authenticateTwitter(accessToken, twitter, setupSettings.apiKey, setupSettings.apiSecret);
       currentMessage = getCurrentStatus(twitter);
       getLogger().info("Twitter is enabled.");
       getLogger().info("Last message was - " + currentMessage);
@@ -519,14 +524,22 @@ public class Main extends JavaPlugin implements Listener {
     return timeLine;
   }
   
-  private static void authenticateTwitter(AccessToken accessToken, Twitter twitter) {
-    twitter.setOAuthConsumer(API_KEY, API_SECRET);
+  // Replace with static method after dubugging
+  //private static void authenticateTwitter(AccessToken accessToken, Twitter twitter, String loadKey, String loadSecret) {
+  private void authenticateTwitter(AccessToken accessToken, Twitter twitter, String loadKey, String loadSecret) {
+    getLogger().info("[authenticateTwitter][DEBUG]APItoken is " + loadKey);
+    getLogger().info("[authenticateTwitter][DEBUG]APIsecret is " + loadSecret);
+    twitter.setOAuthConsumer(loadKey, loadSecret);
     twitter.setOAuthAccessToken(accessToken);
   }
-
-  private static AccessToken loadAccessToken() {
-    String token = Main.token;
-    String tokenSecret = secret;
+  
+  //Replace with static method after dubugging
+  //private static AccessToken loadAccessToken(String loadToken, String loadSecret) {
+  private AccessToken loadAccessToken(String loadToken, String loadSecret) {
+    getLogger().info("[loadAccessToken][DEBUG]token is " + loadToken);
+    getLogger().info("[loadAccessToken][DEBUG]secret is " + loadSecret);
+    String token = loadToken;
+    String tokenSecret = loadSecret;
     return new AccessToken(token, tokenSecret);
   }
 
