@@ -60,7 +60,7 @@ public class Main extends JavaPlugin implements Listener {
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
   private static final String entryMessage = "Server's up, time to get crafting!\n";
   private static final String exitMessage = "The server has joined the choir invisibule.\n";
-  private static final boolean TWITTER_CONFIGURED = false;
+  //private static final boolean TWITTER_CONFIGURED = false;
   //private static final String API_KEY = "XXXX";
   //private static final String API_SECRET = "YYYY";
   //private static final String token = "ZZZ";
@@ -445,12 +445,13 @@ public class Main extends JavaPlugin implements Listener {
 }
   
   private Twitter setupTwitter(twitterSettings setupSettings) throws TwitterException {
-    getLogger().info("[setupTwitter][DEBUG]Status is " + twitterSettings.status);
-    getLogger().info("[setupTwitter][DEBUG]apiKey is " + twitterSettings.apiKey);
-    getLogger().info("[setupTwitter][DEBUG]apiSecret is " + twitterSettings.apiSecret);
-    getLogger().info("[setupTwitter][DEBUG]token is " + twitterSettings.token);
-    getLogger().info("[setupTwitter][DEBUG]secret is " + twitterSettings.secret);
-    if (TWITTER_CONFIGURED) {
+    getLogger().info("[setupTwitter][DEBUG]Status is " + setupSettings.status);
+    getLogger().info("[setupTwitter][DEBUG]apiKey is " + setupSettings.apiKey);
+    getLogger().info("[setupTwitter][DEBUG]apiSecret is " + setupSettings.apiSecret);
+    getLogger().info("[setupTwitter][DEBUG]token is " + setupSettings.token);
+    getLogger().info("[setupTwitter][DEBUG]secret is " + setupSettings.secret);
+    //if (TWITTER_CONFIGURED) {
+    if (setupSettings.status) {
       TwitterFactory factory = new TwitterFactory();
       final Twitter twitter = factory.getInstance();
       AccessToken accessToken = loadAccessToken(setupSettings.token, setupSettings.secret);
