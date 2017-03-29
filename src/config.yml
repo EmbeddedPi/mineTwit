@@ -1,9 +1,10 @@
-# --------------------------------------------------
-# This config holds the Twitter configuration of the 
-# server. Edit and start Twitter running by changing 
-# TWITTER_CONFIGURED to true and then either reload
-# plugin or run updateConfig to update settings.
-# --------------------------------------------------
+# ---------------------------------------------------
+# This config file holds the Twitter configuration 
+# of the server. Edit and start Twitter running by 
+# changing TWITTER_CONFIGURED to true and then either
+# reload plugin or run updateMineTwitConfig to update.
+# plugin or run updateMineTwitConfig to update.
+# ---------------------------------------------------
 Twitter:
   TWITTER_CONFIGURED: false
   API_KEY: XXXX

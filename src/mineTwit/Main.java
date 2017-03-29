@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+//import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Map;
@@ -244,7 +245,18 @@ public class Main extends JavaPlugin implements Listener {
       for (int i=0; i<myNotifications.length; i++) {
         sender.sendMessage(myNotifications[i].type + " is " + myNotifications[i].status);
       }
-      return true;
+      return true;     
+    } else if (cmd.getName().equalsIgnoreCase("updateMineTwitConfig")) {
+      twitterSettings = updateConfig(twitterSettings);
+      try {
+        twitter = setupTwitter(twitterSettings);
+        updateStatus(twitter, entryMessage);
+        } catch (TwitterException e) {
+        getLogger().info("Twitter is broken because of " + e);
+        } finally {
+        getLogger().info("mineTwit goes tweet tweet");
+        }
+      return true;     
     } else {
       getLogger().info("Gibberish or a typo, either way it ain't happening");
       return false; 
@@ -464,6 +476,63 @@ public class Main extends JavaPlugin implements Listener {
       getLogger().info("Twitter is switched off you doughnut.");
       return null;
     }
+  }
+  
+  private twitterSettings updateConfig(twitterSettings currentSettings) {
+    twitterSettings updateSettings = new twitterSettings();
+    //Store current values
+    Boolean currentStatus = currentSettings.status;     
+    String currentApiKey = currentSettings.apiKey;
+    String currentApiSecret = currentSettings.apiSecret;
+    String currentToken = currentSettings.token;
+    String currentSecret = currentSettings.secret;
+    // TODO Debug lines to be removed later
+    getLogger().info("[updateConfig][DEBUG]Current status is " + currentSettings.status);
+    getLogger().info("[updateConfig][DEBUG]Current apiKey is " + currentSettings.apiKey);
+    getLogger().info("[updateConfig][DEBUG]Current apiSecret is " + currentSettings.apiSecret);
+    getLogger().info("[updateConfig][DEBUG]Current token is " + currentSettings.token);
+    getLogger().info("[updateConfig][DEBUG]Current secret is " + currentSettings.secret);
+    //Load config from file to check values
+    reloadConfig();
+    //Boolean proposedStatus = this.getConfig().getBoolean("Twitter.TWITTER_CONFIGURED");
+    String proposedStatus = this.getConfig().getString("Twitter.TWITTER_CONFIGURED");
+    String proposedApiKey = this.getConfig().getString("Twitter.API_KEY");
+    String proposedApiSecret = this.getConfig().getString("Twitter.API_SECRET");
+    String proposedToken = this.getConfig().getString("Twitter.token");
+    String proposedSecret = this.getConfig().getString("Twitter.secret");
+    // TODO Debug lines to be removed later
+    getLogger().info("[updateConfig][DEBUG]Proposed status is " + proposedStatus);
+    getLogger().info("[updateConfig][DEBUG]Proposed apiKey is " + proposedApiKey);
+    getLogger().info("[updateConfig][DEBUG]Proposed apiSecret is " + proposedApiSecret);
+    getLogger().info("[updateConfig][DEBUG]Proposed token is " + proposedToken);
+    getLogger().info("[updateConfig][DEBUG]Proposed secret is " + proposedSecret);
+    //Check if a valid status value is present otherwise revert to previous status
+    if (proposedStatus.equalsIgnoreCase("false") || proposedStatus.equalsIgnoreCase("off") || proposedStatus.equalsIgnoreCase("no")) {
+      updateSettings.status = false;
+    } else if (proposedStatus.equalsIgnoreCase("true") || proposedStatus.equalsIgnoreCase("on") || proposedStatus.equalsIgnoreCase("yes")) {
+      updateSettings.status = true;
+    } else {
+      updateSettings.status = currentStatus;       
+    }
+    /*
+     * TODO Test if string values will update
+  //Check if timeout values are valid
+  if (isInteger(proposedTimeoutString)) {
+    int proposedTimeout = Integer.parseInt(proposedTimeoutString);
+    if (proposedTimeout>=0) {
+      timeout = proposedTimeout;
+    } else {
+          getLogger().info("[updateConfig]Proposed timeout cannot be negative, keeping previous");
+    }
+  } else {
+    getLogger().info("[updateConfig]Proposed timeout is non integer, keeping previous");
+  }
+  //Set values and save
+  this.getConfig().set("LEDIPAddress.timeout", timeout);
+  this.getConfig().set("LEDIPAddress.shortTimeout", shortTimeout);
+  */
+  saveConfig();
+  return updateSettings;
   }
   
   //TODO Test handling of duplicates
