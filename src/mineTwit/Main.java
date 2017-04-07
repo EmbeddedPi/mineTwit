@@ -147,7 +147,7 @@ public class Main extends JavaPlugin implements Listener {
       /*
        * Look at handling
        * org.bukkit.configuration.InvalidConfigurationException
-       * as this resets all value if any string one has errors
+       * as this resets all value if any one string has errors
        * Boolean values are fine
        */
       this.getConfig().options().copyDefaults(false);
@@ -480,12 +480,6 @@ public class Main extends JavaPlugin implements Listener {
   
   private twitterSettings updateConfig(twitterSettings currentSettings) {
     twitterSettings updateSettings = new twitterSettings();
-    //Store current values
-    Boolean currentStatus = currentSettings.status;     
-    String currentApiKey = currentSettings.apiKey;
-    String currentApiSecret = currentSettings.apiSecret;
-    String currentToken = currentSettings.token;
-    String currentSecret = currentSettings.secret;
     // TODO Debug lines to be removed later
     getLogger().info("[updateConfig][DEBUG]Current status is " + currentSettings.status);
     getLogger().info("[updateConfig][DEBUG]Current apiKey is " + currentSettings.apiKey);
@@ -506,33 +500,30 @@ public class Main extends JavaPlugin implements Listener {
     getLogger().info("[updateConfig][DEBUG]Proposed apiSecret is " + proposedApiSecret);
     getLogger().info("[updateConfig][DEBUG]Proposed token is " + proposedToken);
     getLogger().info("[updateConfig][DEBUG]Proposed secret is " + proposedSecret);
+    /*
+     * Account for org.bukkit.configuration.InvalidConfigurationException as this 
+     * resets all values to default even if only one is invalid
+     */
     //Check if a valid status value is present otherwise revert to previous status
     if (proposedStatus.equalsIgnoreCase("false") || proposedStatus.equalsIgnoreCase("off") || proposedStatus.equalsIgnoreCase("no")) {
       updateSettings.status = false;
     } else if (proposedStatus.equalsIgnoreCase("true") || proposedStatus.equalsIgnoreCase("on") || proposedStatus.equalsIgnoreCase("yes")) {
       updateSettings.status = true;
     } else {
-      updateSettings.status = currentStatus;       
+      updateSettings.status = currentSettings.status;       
     }
-    /*
-     * TODO Test if string values will update
-  //Check if timeout values are valid
-  if (isInteger(proposedTimeoutString)) {
-    int proposedTimeout = Integer.parseInt(proposedTimeoutString);
-    if (proposedTimeout>=0) {
-      timeout = proposedTimeout;
-    } else {
-          getLogger().info("[updateConfig]Proposed timeout cannot be negative, keeping previous");
-    }
-  } else {
-    getLogger().info("[updateConfig]Proposed timeout is non integer, keeping previous");
-  }
-  //Set values and save
-  this.getConfig().set("LEDIPAddress.timeout", timeout);
-  this.getConfig().set("LEDIPAddress.shortTimeout", shortTimeout);
-  */
-  saveConfig();
-  return updateSettings;
+    updateSettings.apiKey = proposedApiKey;
+    updateSettings.apiSecret = proposedApiSecret;
+    updateSettings.token = proposedToken;
+    updateSettings.secret = proposedSecret;   
+    //Set values and save
+    this.getConfig().set("Twitter.TWITTER_CONFIGURED", updateSettings.status);
+    this.getConfig().set("Twitter.API_KEY", updateSettings.apiKey);
+    this.getConfig().set("Twitter.API_SECRET", updateSettings.apiSecret);
+    this.getConfig().set("Twitter.token", updateSettings.token);
+    this.getConfig().set("Twitter.secret", updateSettings.secret); 
+    saveConfig();
+    return updateSettings;
   }
   
   //TODO Test handling of duplicates
@@ -567,8 +558,8 @@ public class Main extends JavaPlugin implements Listener {
             // Tweet anyway if duplicates are on AND not ratelimited
           } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
             getLogger().info("Duplicates are false.");
-            getLogger().info("New is " + newMessage);
-            getLogger().info("Current is " + getCurrentStatus(twitter));
+            getLogger().info("Latest is ''" + newMessage + "''");
+            getLogger().info("Last was ''" + getCurrentStatus(twitter) + "''");
             twitter.updateStatus(newMessage + "\n" + new Date());
           } else {
             getLogger().info("Duplicates are false and message is duplicate");
@@ -597,8 +588,8 @@ public class Main extends JavaPlugin implements Listener {
   // Replace with static method after dubugging
   //private static void authenticateTwitter(AccessToken accessToken, Twitter twitter, String loadKey, String loadSecret) {
   private void authenticateTwitter(AccessToken accessToken, Twitter twitter, String loadKey, String loadSecret) {
-    getLogger().info("[authenticateTwitter][DEBUG]APItoken is " + loadKey);
-    getLogger().info("[authenticateTwitter][DEBUG]APIsecret is " + loadSecret);
+    //getLogger().info("[authenticateTwitter][DEBUG]APItoken is " + loadKey);
+    //getLogger().info("[authenticateTwitter][DEBUG]APIsecret is " + loadSecret);
     twitter.setOAuthConsumer(loadKey, loadSecret);
     twitter.setOAuthAccessToken(accessToken);
   }
@@ -606,8 +597,8 @@ public class Main extends JavaPlugin implements Listener {
   //Replace with static method after dubugging
   //private static AccessToken loadAccessToken(String loadToken, String loadSecret) {
   private AccessToken loadAccessToken(String loadToken, String loadSecret) {
-    getLogger().info("[loadAccessToken][DEBUG]token is " + loadToken);
-    getLogger().info("[loadAccessToken][DEBUG]secret is " + loadSecret);
+    //getLogger().info("[loadAccessToken][DEBUG]token is " + loadToken);
+    //getLogger().info("[loadAccessToken][DEBUG]secret is " + loadSecret);
     String token = loadToken;
     String tokenSecret = loadSecret;
     return new AccessToken(token, tokenSecret);
