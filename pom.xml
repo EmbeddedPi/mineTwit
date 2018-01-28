@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.EmbeddedPi</groupId>
 	<artifactId>mineTwit</artifactId>
-	<version>0.3.2</version>
+	<version>0.3.3</version>
 	<properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -54,8 +54,8 @@
 	</build>
 	<repositories>
  		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
         	<artifactId>bukkit</artifactId>
-        	<version>1.6.4-R2.0</version>
+        	<version>1.9.4-R0.1-SNAPSHOT</version>
         	<type>jar</type>
         	<scope>provided</scope>
 		</dependency>
