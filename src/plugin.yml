@@ -1,6 +1,7 @@
 name: mineTwit
 main: mineTwit.Main
-version: 0.4
+version: 0.9
+api-version: 1.13
 commands:
    listNotification:
       description: This lists the current status of all notifications.

@@ -61,11 +61,6 @@ public class Main extends JavaPlugin implements Listener {
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
   private static final String entryMessage = "Server's up, time to get crafting!\n";
   private static final String exitMessage = "The server has joined the choir invisibule.\n";
-  //private static final boolean TWITTER_CONFIGURED = false;
-  //private static final String API_KEY = "XXXX";
-  //private static final String API_SECRET = "YYYY";
-  //private static final String token = "ZZZ";
-  //private static final String secret = "ABABAB";
   private static Twitter twitter;
   private class twitterSettings {
     boolean status;
@@ -89,12 +84,6 @@ public class Main extends JavaPlugin implements Listener {
     //Possibly remove this later as forces return to default upon load
     initialiseNotifications();
     twitterSettings = loadConfiguration();
-    // TODO Debug lines to be removed later
-    //getLogger().info("[onEnable][DEBUG]Status is " + twitterSettings.status);
-    //getLogger().info("[onEnable][DEBUG]apiKey is " + twitterSettings.apiKey);
-    //getLogger().info("[onEnable][DEBUG]apiSecret is " + twitterSettings.apiSecret);
-    //getLogger().info("[onEnable][DEBUG]token is " + twitterSettings.token);
-    //getLogger().info("[onEnable][DEBUG]secret is " + twitterSettings.secret);
     // Set up Twitter
     try {
       twitter = setupTwitter(twitterSettings);
@@ -110,16 +99,6 @@ public class Main extends JavaPlugin implements Listener {
   public void onDisable() {
     // Server down notification
     updateStatus(twitter, exitMessage);
-    /*
-    try {
-      twitter = setupTwitter(twitterSettings);
-      updateStatus(twitter, exitMessage);
-      } catch (TwitterException e) {
-      getLogger().info("Twitter is broken because of " + e);
-      } finally {
-      getLogger().info("mineTwit has fallen off the perch");
-     }
-     */
   }
   
   public twitterSettings loadConfiguration() { 
@@ -158,12 +137,6 @@ public class Main extends JavaPlugin implements Listener {
       configSettings.token = this.getConfig().getString("Twitter.token");
       configSettings.secret = this.getConfig().getString("Twitter.secret");
     } 
-    // TODO Debug lines to be removed later
-    //getLogger().info("[loadConfiguration][DEBUG]Status is " + configSettings.status);
-    //getLogger().info("[loadConfiguration][DEBUG]apiKey is " + configSettings.apiKey);
-    //getLogger().info("[loadConfiguration][DEBUG]apiSecret is " + configSettings.apiSecret);
-    //getLogger().info("[loadConfiguration][DEBUG]token is " + configSettings.token);
-    //getLogger().info("[loadConfiguration][DEBUG]secret is " + configSettings.secret);
     //Write back to file to catch any invalid parameters reset back to default
     this.getConfig().set("Twitter.TWITTER_CONFIGURED", configSettings.status);
     this.getConfig().set("Twitter.API_KEY", configSettings.apiKey);
@@ -459,12 +432,6 @@ public class Main extends JavaPlugin implements Listener {
 }
   
   private Twitter setupTwitter(twitterSettings setupSettings) throws TwitterException {
-    // TODO Debug lines to be removed later
-    //getLogger().info("[setupTwitter][DEBUG]Status is " + setupSettings.status);
-    //getLogger().info("[setupTwitter][DEBUG]apiKey is " + setupSettings.apiKey);
-    //getLogger().info("[setupTwitter][DEBUG]apiSecret is " + setupSettings.apiSecret);
-    //getLogger().info("[setupTwitter][DEBUG]token is " + setupSettings.token);
-    //getLogger().info("[setupTwitter][DEBUG]secret is " + setupSettings.secret);
     //if (TWITTER_CONFIGURED) {
     if (setupSettings.status) {
       TwitterFactory factory = new TwitterFactory();
@@ -483,12 +450,6 @@ public class Main extends JavaPlugin implements Listener {
   
   private twitterSettings updateConfig(twitterSettings currentSettings) {
     twitterSettings updateSettings = new twitterSettings();
-    // TODO Debug lines to be removed later
-    //getLogger().info("[updateConfig][DEBUG]Current status is " + currentSettings.status);
-    //getLogger().info("[updateConfig][DEBUG]Current apiKey is " + currentSettings.apiKey);
-    //getLogger().info("[updateConfig][DEBUG]Current apiSecret is " + currentSettings.apiSecret);
-    //getLogger().info("[updateConfig][DEBUG]Current token is " + currentSettings.token);
-    //getLogger().info("[updateConfig][DEBUG]Current secret is " + currentSettings.secret);
     //Load config from file to check values
     reloadConfig();
     //Boolean proposedStatus = this.getConfig().getBoolean("Twitter.TWITTER_CONFIGURED");
@@ -497,16 +458,6 @@ public class Main extends JavaPlugin implements Listener {
     String proposedApiSecret = this.getConfig().getString("Twitter.API_SECRET");
     String proposedToken = this.getConfig().getString("Twitter.token");
     String proposedSecret = this.getConfig().getString("Twitter.secret");
-    // TODO Debug lines to be removed later
-    //getLogger().info("[updateConfig][DEBUG]Proposed status is " + proposedStatus);
-    //getLogger().info("[updateConfig][DEBUG]Proposed apiKey is " + proposedApiKey);
-    //getLogger().info("[updateConfig][DEBUG]Proposed apiSecret is " + proposedApiSecret);
-    //getLogger().info("[updateConfig][DEBUG]Proposed token is " + proposedToken);
-    //getLogger().info("[updateConfig][DEBUG]Proposed secret is " + proposedSecret);
-    /*
-     * Account for org.bukkit.configuration.InvalidConfigurationException as this 
-     * resets all values to default even if only one is invalid
-     */
     //Check if a valid status value is present otherwise revert to previous status
     if (proposedStatus.equalsIgnoreCase("false") || proposedStatus.equalsIgnoreCase("off") || proposedStatus.equalsIgnoreCase("no")) {
       updateSettings.status = false;
@@ -538,15 +489,13 @@ public class Main extends JavaPlugin implements Listener {
         Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
         for (String endpoint : rateLimit.keySet()) {
           RateLimitStatus status = rateLimit.get(endpoint);
-          //Test line to remove later
-          //getLogger().info("Got rateLimits.endpoints");
           //Omit any endpoints that haven't moved from default limit
           if (status.getRemaining() != status.getLimit()) {
             getLogger().info("Endpoint: " + endpoint);
             getLogger().info(" Limit: " + status.getLimit());
             getLogger().info(" Remaining: " + status.getRemaining());
             getLogger().info(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
-            getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
+            //getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
           }
         }
         boolean rateLimited = false;
@@ -588,8 +537,6 @@ public class Main extends JavaPlugin implements Listener {
   // Replace with static method after dubugging
   //private static void authenticateTwitter(AccessToken accessToken, Twitter twitter, String loadKey, String loadSecret) {
   private void authenticateTwitter(AccessToken accessToken, Twitter twitter, String loadKey, String loadSecret) {
-    //getLogger().info("[authenticateTwitter][DEBUG]APItoken is " + loadKey);
-    //getLogger().info("[authenticateTwitter][DEBUG]APIsecret is " + loadSecret);
     twitter.setOAuthConsumer(loadKey, loadSecret);
     twitter.setOAuthAccessToken(accessToken);
   }
@@ -597,8 +544,6 @@ public class Main extends JavaPlugin implements Listener {
   //Replace with static method after dubugging
   //private static AccessToken loadAccessToken(String loadToken, String loadSecret) {
   private AccessToken loadAccessToken(String loadToken, String loadSecret) {
-    //getLogger().info("[loadAccessToken][DEBUG]token is " + loadToken);
-    //getLogger().info("[loadAccessToken][DEBUG]secret is " + loadSecret);
     String token = loadToken;
     String tokenSecret = loadSecret;
     return new AccessToken(token, tokenSecret);
