@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 //import java.net.InetAddress;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -69,6 +70,15 @@ public class Main extends JavaPlugin implements Listener {
     String token;
     String secret;
   }
+  private class rateLimits {
+    boolean limited;
+    @SuppressWarnings("unused")
+    String endpointName;
+    long resetTime;
+    @SuppressWarnings("unused")
+    String resetDate;
+  }
+  rateLimits rateLimitStatus = new rateLimits();
   twitterSettings twitterSettings = new twitterSettings(); 
   private class notificationList {
     String type;
@@ -84,6 +94,7 @@ public class Main extends JavaPlugin implements Listener {
     //Possibly remove this later as forces return to default upon load
     initialiseNotifications();
     twitterSettings = loadConfiguration();
+    resetRateLimit(rateLimitStatus);
     // Set up Twitter
     try {
       twitter = setupTwitter(twitterSettings);
@@ -261,6 +272,7 @@ public class Main extends JavaPlugin implements Listener {
   myNotifications[6].status = true;
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
+  //TODO consider removing this option and making this default behaviour
   /* Can help with stopping hitting twitter duplicate restrictions by
    * not repeating the same tweet as the last one.
    * Default of false will ignore and not tweet duplicate messages
@@ -483,31 +495,51 @@ public class Main extends JavaPlugin implements Listener {
   //TODO Test handling of duplicates
   private void updateStatus(Twitter twitter, String newMessage) {
     if (twitter != null) {
+      SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss z");
+      //TODO Test this section
+      Date now = new Date();
+      long currentTime = now.getTime()/1000L;
+      Date currentDate = new java.util.Date(currentTime);
+      //If rateLimited but reset time has passed then reset
+      if(rateLimitStatus.limited && (rateLimitStatus.resetTime < currentTime)) {
+        getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
+        getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
+        getLogger().info("[DEBUG] Limit time passed so resetting");
+        resetRateLimit(rateLimitStatus);
+      }
       // Check newMessage
-      try {        
-        // Debug code to check twitter rate limits
-        Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
-        for (String endpoint : rateLimit.keySet()) {
-          RateLimitStatus status = rateLimit.get(endpoint);
-          //Omit any endpoints that haven't moved from default limit
-          if (status.getRemaining() != status.getLimit()) {
-            getLogger().info("Endpoint: " + endpoint);
-            getLogger().info(" Limit: " + status.getLimit());
-            getLogger().info(" Remaining: " + status.getRemaining());
-            getLogger().info(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
-            //getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
+      if(!rateLimitStatus.limited) {
+        try {        
+          // Debug code to check twitter rate limits
+          Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
+          for (String endpoint : rateLimit.keySet()) {
+            RateLimitStatus status = rateLimit.get(endpoint);
+            //Omit any endpoints that haven't moved from default limit
+            if (status.getRemaining() != status.getLimit()) {
+              getLogger().info("Endpoint: " + endpoint);
+              getLogger().info(" Limit: " + status.getLimit());
+              getLogger().info(" Remaining: " + status.getRemaining());
+              //getLogger().info(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
+              //getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
+              Date endpointDate = new java.util.Date(status.getResetTimeInSeconds()*1000L);
+              String formattedEndpointDate = sdf.format(endpointDate);
+              getLogger().info("Reset at: " + formattedEndpointDate);
+              if(status.getRemaining()==0 &&(status.getResetTimeInSeconds() > rateLimitStatus.resetTime)) {
+                getLogger().info("[DEBUG]Rate limit hit for " + endpoint);
+                getLogger().info("[DEBUG]Old reset time " + rateLimitStatus.resetTime);
+                getLogger().info("[DEBUG]New reset time " + status.getResetTimeInSeconds());
+                rateLimitStatus.limited = true;
+                rateLimitStatus.endpointName = endpoint;
+                rateLimitStatus.resetTime = status.getResetTimeInSeconds();
+                rateLimitStatus.resetDate = formattedEndpointDate;
+              }
+            }
           }
-        }
-        boolean rateLimited = false;
-        //Test line for debugging
-        getLogger().info(" Duplicate Array value is : " + myNotifications[8].status);
-        // Check if rateLimited by any particular endpoint.
-        if (!rateLimited) {
           //Tweet if duplicates are off AND not duplicate AND not rate limited
           if (myNotifications[8].status) {
             getLogger().info("Duplicates are true.\n Who cares what the new message is.");
             twitter.updateStatus(newMessage + "\n" + new Date());
-            // Tweet anyway if duplicates are on AND not ratelimited
+            //Tweet anyway if duplicates are on AND not ratelimited
           } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
             getLogger().info("Duplicates are false.");
             getLogger().info("Latest is ''" + newMessage + "''");
@@ -516,13 +548,16 @@ public class Main extends JavaPlugin implements Listener {
           } else {
             getLogger().info("Duplicates are false and message is duplicate");
           }
-        } else {
-          getLogger().info("Twitter is rate limited, not tweeting");
-        }
-      } catch (TwitterException e) {
-        getLogger().info("Twitter is broken because of " + e);
-        throw new RuntimeException(e);
-      }
+       } catch (TwitterException e) {
+         getLogger().info("Twitter is broken because of " + e);
+         throw new RuntimeException(e);
+       }   
+    } else {
+      getLogger().info("Twitter is rate limited, not tweeting");
+      Date limitDate = new java.util.Date(rateLimitStatus.resetTime*1000L);
+      String formattedLimitDate = sdf.format(limitDate);
+      getLogger().info("Limit ends at " + formattedLimitDate);
+    }
     }
   }
   
@@ -547,6 +582,13 @@ public class Main extends JavaPlugin implements Listener {
     String token = loadToken;
     String tokenSecret = loadSecret;
     return new AccessToken(token, tokenSecret);
+  }
+  
+  private void resetRateLimit(rateLimits rateLimit) {
+    rateLimit.limited = false;
+    rateLimit.endpointName = null;
+    rateLimit.resetTime = 0;
+    rateLimit.resetDate = null;
   }
 
 }
