@@ -37,35 +37,48 @@
 <a id="designer-templates" class="anchor" href="#userguide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use</h3>
 
 <p>If you are not interested in playing with the code then just download the latest .jar file from the releases link.
-After downloading, copy it to your minecraft server plugins folder. Guidance on registering Twitter applications here.https://auth0.com/docs/connections/social/twitter. Once complete you will need to note your Consumer Key (API Key),
-Consumer Secret (API Secret), Access Token and Access Token Secret. These shouas appear as long strings and you need to enter them into the plugin settuings ion order for the automation to work.
+After downloading, copy it to your minecraft server plugins folder. Guidance on registering Twitter applications here.
+</br>[a link](https://auth0.com/docs/connections/social/twitter) 
+</br>Once complete you will need to note your Consumer Key (API Key),
+Consumer Secret (API Secret), Access Token and Access Token Secret. These should appear as long strings and you need to enter them into the plugin settuings ion order for the automation to work.
 </p>
 <p>Upon first run the plugin will write a config.yml to its subdirectory in your plugins folder. The default content for this file is as below
-  TWITTER_CONFIGURED: false
-  API_KEY: XXXX
-  API_SECRET: YYYY
-  token: ZZZ
-  secret: ABABAB
-  .
-<UL>Edit the file directly to use the keys saved from Twitter and change TWITTER_CONFIGURED to truie to enable tweeting. Restart the server or reload the plugin. <p align="center"><b>updateUDPConfig</b></p></UL>
-<UL>Use the console command <br><p align="center"><b>setUDPIPAddress [IPAdress]</b></p></UL>
+</br>TWITTER_CONFIGURED: false
+</br>API_KEY: XXXX
+</br>API_SECRET: YYYY
+</br>token: ZZZ
+</br>secret: ABABAB
+
+<UL>Edit the file directly to use the keys saved from Twitter and change TWITTER_CONFIGURED to true to enable tweeting. Restart the server or reload the plugin using the console command. </p></UL>
+<UL><br><p align="center"><b>updateMineTwitConfig</b></p></UL>
 .<p>
 <p> If you want to play with the source code then download the whole project from the links on the left. It was built in Eclipse using the Maven framework.</p>
 
 <h3>
 <a id="designer-templates" class="anchor" href="#userguide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Detailed configuration</h3>
 
-<p>The plugin has 3 commands that can all be controlwhat events are tweeted.</p>
-<UL><b>listNotification</b> Lists the current settings.</UL>
-<UL><b>setNotification [Notification name] [Status]</b>Stets any individual setting eg </UL>
-<UL><b>updateMineTwitConfig</b>Updates from config file</UL>
-<p>It should be noted that restarting the server after manually editing config.yml will have broadly the same effect except that in the case of an error it will revert to the defaults not the last known good value. For this reason it is recommended to either use the console commands to change parameters or use <b>updateUDPConfig</b> if manually editing.</p>
+<p>The plugin has 3 commands that can control events are tweeted.</p>
+<UL><b>listNotification</b></br>Lists the current settings.</UL>
+<UL><b>setNotification [Notification name] [Status]</b></br>Sets any individual setting eg 
+</br>loggingInOut
+</br>blockPlacing
+</br>dying
+</br>taming
+</br>fishing
+</br>kicking
+</br>teleporting
+</br>enteringVehicle
+</br>duplicate
+</UL>
+
+<UL><b>updateMineTwitConfig</b></br>Updates from config file</UL>
+<p>It should be noted that restarting the server after manually editing config.yml will have broadly the same effect except that in the case of an error it will revert to the defaults not the last known good value. For this reason it is recommended to either use the console commands to change parameters or use <b>updateMineTwitConfig</b> if manually editing.</p>
 
 
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-<p>I wrote this, it's my first proper code for well over twenty years (Excel macros notwithstanding) and probably the same for electronics that wasn't work related. Any sugestions for improvements to the code are welcome, contact me on GitHub. It's been fun perhaps with the exception of my woeful attempts to understand Git merges!</p>
+<p>I wrote this based on a fork of an existing Java project that accessed the Twitter4J API, it's part of my first foray back into coding for well over twenty years (Excel macros notwithstanding). Any suggestions for improvements to the code are welcome, contact me on GitHub. It's been fun perhaps with the exception of my woeful attempts to understand Git merges!</p>
 
       </section>
       <footer>
