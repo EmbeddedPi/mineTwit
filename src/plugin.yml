@@ -14,7 +14,7 @@ commands:
       permission: op
       permission-message: No you don't, you just aren't worthy!
    updateMineTwitConfig:
-      description: Updates the Twitter settings form the config file.
+      description: Updates the Twitter settings from the config file.
       usage: /updateMineTwitConfig
       permission: op
       permission-message: As if I'd let you do that!

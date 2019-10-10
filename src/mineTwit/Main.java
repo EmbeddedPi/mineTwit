@@ -75,7 +75,6 @@ public class Main extends JavaPlugin implements Listener {
     @SuppressWarnings("unused")
     String endpointName;
     long resetTime;
-    @SuppressWarnings("unused")
     String resetDate;
   }
   rateLimits rateLimitStatus = new rateLimits();
@@ -450,9 +449,11 @@ public class Main extends JavaPlugin implements Listener {
       final Twitter twitter = factory.getInstance();
       AccessToken accessToken = loadAccessToken(setupSettings.token, setupSettings.secret);
       authenticateTwitter(accessToken, twitter, setupSettings.apiKey, setupSettings.apiSecret);
-      currentMessage = getCurrentStatus(twitter);
+      //TODO Remove after debugging
+      //currentMessage = getCurrentStatus(twitter);
       getLogger().info("Twitter is enabled.");
-      getLogger().info("Last message was - " + currentMessage);
+      //TODO Remove after debugging
+      //getLogger().info("Last message was - " + currentMessage);
       return twitter;
     } else {
       getLogger().info("Twitter is switched off you doughnut.");
@@ -498,8 +499,11 @@ public class Main extends JavaPlugin implements Listener {
       SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss z");
       //TODO Test this section
       Date now = new Date();
+      getLogger().info("[DEBUG] Now is " + now);
       long currentTime = now.getTime()/1000L;
+      getLogger().info("[DEBUG] Current time is " + currentTime);
       Date currentDate = new java.util.Date(currentTime);
+      getLogger().info("[DEBUG] rateLimitStatus.resetTime is " + rateLimitStatus.resetTime);
       //If rateLimited but reset time has passed then reset
       if(rateLimitStatus.limited && (rateLimitStatus.resetTime < currentTime)) {
         getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
@@ -535,15 +539,15 @@ public class Main extends JavaPlugin implements Listener {
               }
             }
           }
-          //Tweet if duplicates are off AND not duplicate AND not rate limited
+          //Tweet if duplicates are on
           if (myNotifications[8].status) {
             getLogger().info("Duplicates are true.\n Who cares what the new message is.");
             twitter.updateStatus(newMessage + "\n" + new Date());
-            //Tweet anyway if duplicates are on AND not ratelimited
+            //Tweet if duplicates are off but messages do not match
           } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
             getLogger().info("Duplicates are false.");
-            getLogger().info("Latest is ''" + newMessage + "''");
-            getLogger().info("Last was ''" + getCurrentStatus(twitter) + "''");
+            getLogger().info("Latest is '" + newMessage + "'");
+            getLogger().info("Last was '" + getCurrentStatus(twitter) + "'");
             twitter.updateStatus(newMessage + "\n" + new Date());
           } else {
             getLogger().info("Duplicates are false and message is duplicate");
@@ -566,7 +570,9 @@ public class Main extends JavaPlugin implements Listener {
     ResponseList<Status> userTimeLine = twitter.getUserTimeline();
     //Split off first line.
     String timeLine = userTimeLine.get(0).getText();
-    return timeLine;
+    String[] splitTimeLine = timeLine.split("\r\n|\r|\n",2);
+    String currentStatus = splitTimeLine[0];
+    return currentStatus;
   }
   
   // Replace with static method after dubugging
