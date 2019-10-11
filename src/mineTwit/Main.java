@@ -57,7 +57,7 @@ public class Main extends JavaPlugin implements Listener {
   private String recentPlayerIP = "";
   private Location recentPlayerLocation;
   private String locationMessage = "";
-  private String currentMessage;
+  //private String currentMessage;
   private boolean recentJoin = false;
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
   private static final String entryMessage = "Server's up, time to get crafting!\n";
@@ -504,10 +504,10 @@ public class Main extends JavaPlugin implements Listener {
       getLogger().info("[DEBUG] Current time is " + currentTime);
       Date currentDate = new java.util.Date(currentTime);
       getLogger().info("[DEBUG] rateLimitStatus.resetTime is " + rateLimitStatus.resetTime);
+      getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
+      getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
       //If rateLimited but reset time has passed then reset
       if(rateLimitStatus.limited && (rateLimitStatus.resetTime < currentTime)) {
-        getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
-        getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
         getLogger().info("[DEBUG] Limit time passed so resetting");
         resetRateLimit(rateLimitStatus);
       }
