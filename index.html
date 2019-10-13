@@ -38,9 +38,9 @@
 
 <p>If you are not interested in playing with the code then just download the latest .jar file from the releases link.
 After downloading, copy it to your minecraft server plugins folder. Guidance on registering Twitter applications here.
-</br>[a link](https://auth0.com/docs/connections/social/twitter) 
+</br>https://auth0.com/docs/connections/social/twitter
 </br>Once complete you will need to note your Consumer Key (API Key),
-Consumer Secret (API Secret), Access Token and Access Token Secret. These should appear as long strings and you need to enter them into the plugin settuings ion order for the automation to work.
+Consumer Secret (API Secret), Access Token and Access Token Secret. These should appear as long strings and you need to enter them into the plugin settings ion order for the automation to work.
 </p>
 <p>Upon first run the plugin will write a config.yml to its subdirectory in your plugins folder. The default content for this file is as below
 </br>TWITTER_CONFIGURED: false
@@ -51,7 +51,7 @@ Consumer Secret (API Secret), Access Token and Access Token Secret. These should
 
 <UL>Edit the file directly to use the keys saved from Twitter and change TWITTER_CONFIGURED to true to enable tweeting. Restart the server or reload the plugin using the console command. </p></UL>
 <UL><br><p align="center"><b>updateMineTwitConfig</b></p></UL>
-.<p>
+<p> In the current v0.9 release, you need to copy the twitter4j-core-4.0.7.jar file into a folder called lib underneath your server plugins folder. This file can be obtained from inside http://twitter4j.org/archive/twitter4j-4.0.7.zip at the twitter4j.org/en/
 <p> If you want to play with the source code then download the whole project from the links on the left. It was built in Eclipse using the Maven framework.</p>
 
 <h3>
@@ -69,6 +69,7 @@ Consumer Secret (API Secret), Access Token and Access Token Secret. These should
 </br>teleporting
 </br>enteringVehicle
 </br>duplicate
+</br>Setting any of the above to true or false switches the relevant notification to on or off. Default setting is true for all of them except blockPlacing and duplicates which are both false by default. Twitter has a limit of 180 tweets per 15 minute window so having blockPlacing switched on will easily exceed the limit when building. If this happens then the plugin will stop tweeting until the window is reopened. 
 </UL>
 
 <UL><b>updateMineTwitConfig</b></br>Updates from config file</UL>
