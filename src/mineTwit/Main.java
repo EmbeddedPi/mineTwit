@@ -60,8 +60,8 @@ public class Main extends JavaPlugin implements Listener {
   //private String currentMessage;
   private boolean recentJoin = false;
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
-  private static final String entryMessage = "Server's up, time to get crafting!\n";
-  private static final String exitMessage = "The server has joined the choir invisibule.\n";
+  private static final String entryMessage = "Server's up, time to get crafting!";
+  private static final String exitMessage = "The server has joined the choir invisibule.";
   private static Twitter twitter;
   private class twitterSettings {
     boolean status;
