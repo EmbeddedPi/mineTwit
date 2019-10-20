@@ -51,9 +51,9 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Start of comment section
-			-->
+
 			<!-- Section to add twitter4j jar to uber jar -->
+			<!-- 
 			<plugin>
       			<artifactId>maven-assembly-plugin</artifactId>
       				<configuration>
@@ -68,15 +68,51 @@
       				</configuration>
       				<executions>
     					<execution>
-      						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-      						<phase>package</phase> <!-- bind to the packaging phase -->
+      						<id>make-assembly</id> 
+      						-->
+      						<!-- this is used for inheritance merges -->
+      						<!--  
+      						<phase>package</phase>
+      						--> 
+      						<!-- bind to the packaging phase -->
+      						<!-- 
       					<goals>
         					<goal>single</goal>
       					</goals>
     				</execution>
   				</executions>
     		</plugin>
+    		-->
     		<!-- End of section to add twitter4j jar to uber jar -->
+    		
+    		<!--  Start of shaded jar version -->
+    		<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-shade-plugin</artifactId>
+        		<version>3.2.1</version>
+        			<executions>
+          				<execution>
+            				<phase>package</phase>
+            				<goals>
+              					<goal>shade</goal>
+            				</goals>
+            				<configuration>
+              					<shadedArtifactAttached>true</shadedArtifactAttached>
+              					<shadedClassifierName>twitter4j</shadedClassifierName> <!-- Any name that makes sense -->
+            				 	<filters>
+            				 		<filter>
+            				 		<artifact>*:*</artifact>
+                					<excludes>
+                  						<exclude>twitter4j/util/*.*</exclude>
+                  						<exclude>twitter4j/util/function/*.*</exclude>
+                					</excludes>
+                					</filter>
+              					</filters>
+            				</configuration>
+          				</execution>
+        			</executions>
+      		</plugin>
+      		<!-- End of section to add shaded jar to uber jar -->
 		</plugins>
 	</build>
 	<repositories>
