@@ -512,7 +512,9 @@ public class Main extends JavaPlugin implements Listener {
       }
       // Check newMessage
       if(!rateLimitStatus.limited) {
-        try {        
+        try {  
+          //TODO Before doing anything check whether newMessage + "\n" + Now (Date() does not
+          // equal full currentStatus
           // Debug code to check twitter rate limits
           Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
           for (String endpoint : rateLimit.keySet()) {
@@ -564,6 +566,7 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
   
+  //TODO Split this off into two versions, one which gets whole message including date
   private String getCurrentStatus (Twitter twitter) throws TwitterException {
     // Gets last user tweet from timeline.
     ResponseList<Status> userTimeLine = twitter.getUserTimeline();
