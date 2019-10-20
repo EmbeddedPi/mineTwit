@@ -113,7 +113,6 @@ public class Main extends JavaPlugin implements Listener {
   
   public twitterSettings loadConfiguration() { 
     // Create virtual config file
-    //getLogger().info("[loadConfiguration] is starting");
     File configFile = new File(getDataFolder(), "config.yml");
     twitterSettings configSettings = new twitterSettings();
     /*
@@ -520,18 +519,18 @@ public class Main extends JavaPlugin implements Listener {
             RateLimitStatus status = rateLimit.get(endpoint);
             //Omit any endpoints that haven't moved from default limit
             if (status.getRemaining() != status.getLimit()) {
-              getLogger().info("Endpoint: " + endpoint);
-              getLogger().info(" Limit: " + status.getLimit());
-              getLogger().info(" Remaining: " + status.getRemaining());
+              getLogger().info("[DEBUG] Endpoint: " + endpoint);
+              getLogger().info("[DEBUG] Limit: " + status.getLimit());
+              getLogger().info("[DEBUG] Remaining: " + status.getRemaining());
               //getLogger().info(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
               //getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
               Date endpointDate = new java.util.Date(status.getResetTimeInSeconds()*1000L);
               String formattedEndpointDate = sdf.format(endpointDate);
-              getLogger().info("Reset at: " + formattedEndpointDate);
+              getLogger().info("[DEBUG] Reset at: " + formattedEndpointDate);
               if(status.getRemaining()==0 &&(status.getResetTimeInSeconds() > rateLimitStatus.resetTime)) {
-                getLogger().info("[DEBUG]Rate limit hit for " + endpoint);
-                getLogger().info("[DEBUG]Old reset time " + rateLimitStatus.resetTime);
-                getLogger().info("[DEBUG]New reset time " + status.getResetTimeInSeconds());
+                getLogger().info("[DEBUG] Rate limit hit for " + endpoint);
+                getLogger().info("[DEBUG] Old reset time " + rateLimitStatus.resetTime);
+                getLogger().info("[DEBUG] New reset time " + status.getResetTimeInSeconds());
                 rateLimitStatus.limited = true;
                 rateLimitStatus.endpointName = endpoint;
                 rateLimitStatus.resetTime = status.getResetTimeInSeconds();
@@ -541,16 +540,16 @@ public class Main extends JavaPlugin implements Listener {
           }
           //Tweet if duplicates are on
           if (myNotifications[8].status) {
-            getLogger().info("Duplicates are true.\n Who cares what the new message is.");
+            getLogger().info("[DEBUG] Duplicates are true. Tweeting whatever the new message is.");
             twitter.updateStatus(newMessage + "\n" + new Date());
             //Tweet if duplicates are off but messages do not match
           } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
-            getLogger().info("Duplicates are false.");
-            getLogger().info("Latest is '" + newMessage + "'");
-            getLogger().info("Last was '" + getCurrentStatus(twitter) + "'");
+            getLogger().info("[DEBUG] Duplicates are false but message has changed so tweeting anyway.");
+            //getLogger().info("[DEBUG]Latest is '" + newMessage + "'");
+            //getLogger().info("[DEBUG]Last was '" + getCurrentStatus(twitter) + "'");
             twitter.updateStatus(newMessage + "\n" + new Date());
           } else {
-            getLogger().info("Duplicates are false and message is duplicate");
+            getLogger().info("[DEBUG] Duplicates are false and message is duplicate, not tweeting");
           }
        } catch (TwitterException e) {
          getLogger().info("Twitter is broken because of " + e);

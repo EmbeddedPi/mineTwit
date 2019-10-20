@@ -1,6 +1,6 @@
 name: mineTwit
 main: mineTwit.Main
-version: 0.9
+version: 0.99
 api-version: 1.13
 commands:
    listNotification:
