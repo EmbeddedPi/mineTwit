@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-//import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,8 +56,8 @@ public class Main extends JavaPlugin implements Listener {
   private String recentPlayerIP = "";
   private Location recentPlayerLocation;
   private String locationMessage = "";
-  //private String currentMessage;
   private boolean recentJoin = false;
+  //TODO Consider adding this into config settings
   private String[] exemptionList = {"Banana_Skywalker", "JeannieInABottle"}; 
   private static final String entryMessage = "Server's up, time to get crafting!";
   private static final String exitMessage = "The server has joined the choir invisibule.";
@@ -90,7 +89,7 @@ public class Main extends JavaPlugin implements Listener {
     // Register listener
     getServer().getPluginManager().registerEvents(this, this);
     //Set up notifications
-    //Possibly remove this later as forces return to default upon load
+    //TODO Possibly remove this later as forces return to default upon load
     initialiseNotifications();
     twitterSettings = loadConfiguration();
     resetRateLimit(rateLimitStatus);
@@ -248,14 +247,14 @@ public class Main extends JavaPlugin implements Listener {
   }
     
  private void initialiseNotifications() {
+  //TODO Incorporate this into config settings so can be saved.
   for (int i=0; i<myNotifications.length; i++) {
     myNotifications[i]= new notificationList(); 
   }
   // Set defaults
-  // getLogger().info("I'm setting the array I is");
   myNotifications[0].type = "loggingInOut";
   myNotifications[0].status = true;
-  //Set to false as will overload twitter update limits if building
+  //Set to false as can overload twitter update limits quickly with building
   myNotifications[1].type= "blockPlacing";
   myNotifications[1].status = false;
   myNotifications[2].type= "dying";
@@ -270,11 +269,7 @@ public class Main extends JavaPlugin implements Listener {
   myNotifications[6].status = true;
   myNotifications[7].type= "enteringVehicle"; 
   myNotifications[7].status = true;
-  //TODO consider removing this option and making this default behaviour
-  /* Can help with stopping hitting twitter duplicate restrictions by
-   * not repeating the same tweet as the last one.
-   * Default of false will ignore and not tweet duplicate messages
-   */
+  //Set to false as can overload twitter updates limits quickly with building
   myNotifications[8].type= "duplicate"; 
   myNotifications[8].status = false;
  }
@@ -448,11 +443,7 @@ public class Main extends JavaPlugin implements Listener {
       final Twitter twitter = factory.getInstance();
       AccessToken accessToken = loadAccessToken(setupSettings.token, setupSettings.secret);
       authenticateTwitter(accessToken, twitter, setupSettings.apiKey, setupSettings.apiSecret);
-      //TODO Remove after debugging
-      //currentMessage = getCurrentStatus(twitter);
       getLogger().info("Twitter is enabled.");
-      //TODO Remove after debugging
-      //getLogger().info("Last message was - " + currentMessage);
       return twitter;
     } else {
       getLogger().info("Twitter is switched off you doughnut.");
@@ -494,64 +485,74 @@ public class Main extends JavaPlugin implements Listener {
   
   //TODO Test handling of duplicates
   private void updateStatus(Twitter twitter, String newMessage) {
-    if (twitter != null) {
+    if (twitter != null) {      
       SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss z");
-      //TODO Test this section
       Date now = new Date();
-      getLogger().info("[DEBUG] Now is " + now);
-      long currentTime = now.getTime()/1000L;
-      getLogger().info("[DEBUG] Current time is " + currentTime);
-      Date currentDate = new java.util.Date(currentTime);
-      getLogger().info("[DEBUG] rateLimitStatus.resetTime is " + rateLimitStatus.resetTime);
-      getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
-      getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
-      //If rateLimited but reset time has passed then reset
-      if(rateLimitStatus.limited && (rateLimitStatus.resetTime < currentTime)) {
-        getLogger().info("[DEBUG] Limit time passed so resetting");
-        resetRateLimit(rateLimitStatus);
+      //If rateLimited then check if reset time has passed and reset rateLimitStatus
+      if (rateLimitStatus.limited) {
+        //Get current time to check against    
+        long currentTime = now.getTime()/1000L;
+        //This line only used for debug code so could remove
+        Date currentDate = new java.util.Date(currentTime);
+        getLogger().info("[DEBUG] Now is " + now);
+        getLogger().info("[DEBUG] Current time is " + currentTime);
+        getLogger().info("[DEBUG] rateLimitStatus.resetTime is " + rateLimitStatus.resetTime);
+        getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
+        getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
+        if (rateLimitStatus.resetTime < currentTime) {
+          getLogger().info("[DEBUG] Limit time passed so resetting");
+          resetRateLimit(rateLimitStatus);
+        }
       }
       // Check newMessage
       if(!rateLimitStatus.limited) {
         try {  
-          //TODO Before doing anything check whether newMessage + "\n" + Now (Date() does not
-          // equal full currentStatus
-          // Debug code to check twitter rate limits
-          Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
-          for (String endpoint : rateLimit.keySet()) {
-            RateLimitStatus status = rateLimit.get(endpoint);
-            //Omit any endpoints that haven't moved from default limit
-            if (status.getRemaining() != status.getLimit()) {
-              getLogger().info("[DEBUG] Endpoint: " + endpoint);
-              getLogger().info("[DEBUG] Limit: " + status.getLimit());
-              getLogger().info("[DEBUG] Remaining: " + status.getRemaining());
-              //getLogger().info(" ResetTimeInSeconds: " + status.getResetTimeInSeconds());
-              //getLogger().info(" SecondsUntilReset: " + status.getSecondsUntilReset());
-              Date endpointDate = new java.util.Date(status.getResetTimeInSeconds()*1000L);
-              String formattedEndpointDate = sdf.format(endpointDate);
-              getLogger().info("[DEBUG] Reset at: " + formattedEndpointDate);
-              if(status.getRemaining()==0 &&(status.getResetTimeInSeconds() > rateLimitStatus.resetTime)) {
-                getLogger().info("[DEBUG] Rate limit hit for " + endpoint);
-                getLogger().info("[DEBUG] Old reset time " + rateLimitStatus.resetTime);
-                getLogger().info("[DEBUG] New reset time " + status.getResetTimeInSeconds());
-                rateLimitStatus.limited = true;
-                rateLimitStatus.endpointName = endpoint;
-                rateLimitStatus.resetTime = status.getResetTimeInSeconds();
-                rateLimitStatus.resetDate = formattedEndpointDate;
+          //TODO test me!
+          //Check message is not completely duplicate first
+          String[] currentStatus = getCurrentStatus(twitter);
+          getLogger().info("[DEBUG] newMessage is " + newMessage);
+          getLogger().info("[DEBUG] now is " + now);
+          getLogger().info("[DEBUG] currentStatus[0] is " +currentStatus[0]);
+          getLogger().info("[DEBUG] currentStatus[1] is " +currentStatus[1]);
+          if (!(newMessage.equals(currentStatus[0])) || !(now.equals(currentStatus[1]))) {
+            // Debug code to check twitter rate limits
+            Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
+            for (String endpoint : rateLimit.keySet()) {
+              RateLimitStatus status = rateLimit.get(endpoint);
+              //Omit any endpoints that haven't moved from default limit
+              if (status.getRemaining() != status.getLimit()) {
+                getLogger().info("[DEBUG] Endpoint: " + endpoint);
+                getLogger().info("[DEBUG] Limit: " + status.getLimit());
+                getLogger().info("[DEBUG] Remaining: " + status.getRemaining());
+                Date endpointDate = new java.util.Date(status.getResetTimeInSeconds()*1000L);
+                String formattedEndpointDate = sdf.format(endpointDate);
+                getLogger().info("[DEBUG] Reset at: " + formattedEndpointDate);
+                if(status.getRemaining()==0 &&(status.getResetTimeInSeconds() > rateLimitStatus.resetTime)) {
+                  getLogger().info("[DEBUG] Rate limit hit for " + endpoint);
+                  getLogger().info("[DEBUG] Old reset time " + rateLimitStatus.resetTime);
+                  getLogger().info("[DEBUG] New reset time " + status.getResetTimeInSeconds());
+                  rateLimitStatus.limited = true;
+                  rateLimitStatus.endpointName = endpoint;
+                  rateLimitStatus.resetTime = status.getResetTimeInSeconds();
+                  rateLimitStatus.resetDate = formattedEndpointDate;
+                }
               }
             }
-          }
-          //Tweet if duplicates are on
-          if (myNotifications[8].status) {
-            getLogger().info("[DEBUG] Duplicates are true. Tweeting whatever the new message is.");
-            twitter.updateStatus(newMessage + "\n" + new Date());
-            //Tweet if duplicates are off but messages do not match
-          } else if (!myNotifications[8].status && !newMessage.equals(getCurrentStatus(twitter))) {
-            getLogger().info("[DEBUG] Duplicates are false but message has changed so tweeting anyway.");
-            //getLogger().info("[DEBUG]Latest is '" + newMessage + "'");
-            //getLogger().info("[DEBUG]Last was '" + getCurrentStatus(twitter) + "'");
-            twitter.updateStatus(newMessage + "\n" + new Date());
+            //Tweet if duplicates are on
+            if (myNotifications[8].status) {
+              getLogger().info("[DEBUG] Duplicates are true. Tweeting whatever the new message is.");
+              twitter.updateStatus(newMessage + "\n" + now);
+              //Tweet if duplicates are off but messages do not match
+            } else if (!myNotifications[8].status && !newMessage.equals(currentStatus[0])) {
+              getLogger().info("[DEBUG] Duplicates are false but message has changed so tweeting anyway.");
+              getLogger().info("[DEBUG]Latest is '" + newMessage + "'");
+              getLogger().info("[DEBUG]Last was '" + currentStatus[0] + "'");
+              twitter.updateStatus(newMessage + "\n" + now);
+            } else {
+              getLogger().info("[DEBUG] Duplicates are false and message is duplicate, not tweeting");
+            }
           } else {
-            getLogger().info("[DEBUG] Duplicates are false and message is duplicate, not tweeting");
+            getLogger().info("Ignore as exact duplicate of previous message so Twitter will reject");      
           }
        } catch (TwitterException e) {
          getLogger().info("Twitter is broken because of " + e);
@@ -566,15 +567,17 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
   
-  //TODO Split this off into two versions, one which gets whole message including date
-  private String getCurrentStatus (Twitter twitter) throws TwitterException {
+  //TODO Test this
+  private String[] getCurrentStatus (Twitter twitter) throws TwitterException {
     // Gets last user tweet from timeline.
     ResponseList<Status> userTimeLine = twitter.getUserTimeline();
     //Split off first line.
     String timeLine = userTimeLine.get(0).getText();
     String[] splitTimeLine = timeLine.split("\r\n|\r|\n",2);
-    String currentStatus = splitTimeLine[0];
-    return currentStatus;
+    //Remove after testing
+    //String[] currentStatus = splitTimeLine[0];
+    //String currentStatus[1] = splitTimeLine[1];
+    return splitTimeLine;
   }
   
   // Replace with static method after dubugging
