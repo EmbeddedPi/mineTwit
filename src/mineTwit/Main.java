@@ -204,18 +204,20 @@ public class Main extends JavaPlugin implements Listener {
         // Check first argument is a valid command
         for (int i=0; i<myNotifications.length; i++) {
           if (myNotifications[i].type.equalsIgnoreCase(args[0])) {
-            sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
+            //sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
             // Check second argument is valid boolean
             if (args[1].equalsIgnoreCase("false")) {
               // Switch it off 
               myNotifications[i].status = false;
+              sender.sendMessage(args[0] + " set to " + args[1]);
               return true;
             } else if (args[1].equalsIgnoreCase("true")) {
               // Switch it on 
               myNotifications[i].status = true;
+              sender.sendMessage(args[0] + " set to " + args[1]);
               return true;
             } else {
-              sender.sendMessage("Status needs to be true or false");
+              sender.sendMessage("Status needs to be true or false, " + args[1] + " is not a valid argument.");
               return false;
             }
           }
@@ -493,11 +495,12 @@ public class Main extends JavaPlugin implements Listener {
         //Get current time to check against    
         long currentTime = now.getTime()/1000L;
         //This line only used for debug code so could remove
-        Date currentDate = new java.util.Date(currentTime);
+        //Date currentDate = new java.util.Date(currentTime);
         getLogger().info("[DEBUG] Now is " + now);
         getLogger().info("[DEBUG] Current time is " + currentTime);
         getLogger().info("[DEBUG] rateLimitStatus.resetTime is " + rateLimitStatus.resetTime);
-        getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
+        //Limited use for debugging so remove
+        //getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
         getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
         if (rateLimitStatus.resetTime < currentTime) {
           getLogger().info("[DEBUG] Limit time passed so resetting");
