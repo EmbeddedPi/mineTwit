@@ -515,8 +515,9 @@ public class Main extends JavaPlugin implements Listener {
           String[] currentStatus = getCurrentStatus(twitter);
           getLogger().info("[DEBUG] newMessage is " + newMessage);
           getLogger().info("[DEBUG] now is " + now);
-          getLogger().info("[DEBUG] currentStatus[0] is " +currentStatus[0]);
-          getLogger().info("[DEBUG] currentStatus[1] is " +currentStatus[1]);
+          getLogger().info("[DEBUG] currentStatus[0] is " + currentStatus[0]);
+          getLogger().info("[DEBUG] currentStatus[1] is " + currentStatus[1]);
+          getLogger().info("[DEBUG] Oggy Oggy Oggy" );
           //TODO test lines 
           if (newMessage.equals(currentStatus[0])) {
             getLogger().info("[DEBUG] newMessage equals currentStatus[0]");
@@ -525,6 +526,7 @@ public class Main extends JavaPlugin implements Listener {
           } else {
              String tempNowString = now + "_Test";
              String tempCurrentStatus = currentStatus[1] + "_Test";
+             getLogger().info("[DEBUG] currentStatus[x] does not match");
              if (tempNowString.equals(tempCurrentStatus)) {
                getLogger().info("[DEBUG] tempNowString equals tempCurrentStatus");
              }
