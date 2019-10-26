@@ -521,15 +521,15 @@ public class Main extends JavaPlugin implements Listener {
           //TODO test lines 
           if (newMessage.equals(currentStatus[0])) {
             getLogger().info("[DEBUG] newMessage equals currentStatus[0]");
-          } else if (now.equals(currentStatus[1])) {
+          } 
+          if (now.equals(currentStatus[1])) {
             getLogger().info("[DEBUG] now equals currentStatus[1]");
-          } else {
-             String tempNowString = now + "_Test";
-             String tempCurrentStatus = currentStatus[1] + "_Test";
-             getLogger().info("[DEBUG] currentStatus[x] does not match");
-             if (tempNowString.equals(tempCurrentStatus)) {
-               getLogger().info("[DEBUG] tempNowString equals tempCurrentStatus");
-             }
+          } 
+          String tempNowString = now + "_Test";
+          String tempCurrentStatus = currentStatus[1] + "_Test";
+          getLogger().info("[DEBUG] currentStatus[x] does not match");
+          if (tempNowString.equals(tempCurrentStatus)) {
+            getLogger().info("[DEBUG] tempNowString equals tempCurrentStatus");
           }
           if (!(newMessage.equals(currentStatus[0])) || !(now.equals(currentStatus[1]))) {
             // Debug code to check twitter rate limits
