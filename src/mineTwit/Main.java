@@ -568,12 +568,8 @@ public class Main extends JavaPlugin implements Listener {
   private String[] getCurrentStatus (Twitter twitter) throws TwitterException {
     // Gets last user tweet from timeline.
     ResponseList<Status> userTimeLine = twitter.getUserTimeline();
-    //Split off first line.
     String timeLine = userTimeLine.get(0).getText();
     String[] splitTimeLine = timeLine.split("\r\n|\r|\n",2);
-    //Remove after testing
-    //String[] currentStatus = splitTimeLine[0];
-    //String currentStatus[1] = splitTimeLine[1];
     return splitTimeLine;
   }
   
