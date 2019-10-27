@@ -204,7 +204,6 @@ public class Main extends JavaPlugin implements Listener {
         // Check first argument is a valid command
         for (int i=0; i<myNotifications.length; i++) {
           if (myNotifications[i].type.equalsIgnoreCase(args[0])) {
-            //sender.sendMessage(myNotifications[i].type + " matches " + args[0]);
             // Check second argument is valid boolean
             if (args[1].equalsIgnoreCase("false")) {
               // Switch it off 
@@ -379,6 +378,7 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
   
+  //TODO Make IP address a configurable item
   private boolean isLocal(String recentPlayerIP) {
     // Check whether IP address is coming from router hence WAN
     if (recentPlayerIP.equals("192.168.1.1")) {
@@ -485,7 +485,6 @@ public class Main extends JavaPlugin implements Listener {
     return updateSettings;
   }
   
-  //TODO Test handling of duplicates
   private void updateStatus(Twitter twitter, String newMessage) {
     if (twitter != null) {      
       SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss z");
@@ -494,13 +493,10 @@ public class Main extends JavaPlugin implements Listener {
       if (rateLimitStatus.limited) {
         //Get current time to check against    
         long currentTime = now.getTime()/1000L;
-        //This line only used for debug code so could remove
-        //Date currentDate = new java.util.Date(currentTime);
+        //TODO Remove these after testing
         getLogger().info("[DEBUG] Now is " + now);
         getLogger().info("[DEBUG] Current time is " + currentTime);
         getLogger().info("[DEBUG] rateLimitStatus.resetTime is " + rateLimitStatus.resetTime);
-        //Limited use for debugging so remove
-        //getLogger().info("[DEBUG] currentDate is " + sdf.format(currentDate));
         getLogger().info("[DEBUG] resetDate is " + rateLimitStatus.resetDate);
         if (rateLimitStatus.resetTime < currentTime) {
           getLogger().info("[DEBUG] Limit time passed so resetting");
@@ -512,12 +508,13 @@ public class Main extends JavaPlugin implements Listener {
         try {  
           String[] currentStatus = getCurrentStatus(twitter);
           if (!(newMessage.equals(currentStatus[0])) || !(String.valueOf(now).equals(currentStatus[1]))) {
-            // Debug code to check twitter rate limits
+            // Check twitter rate limits
             Map <String, RateLimitStatus> rateLimit = twitter.getRateLimitStatus();
             for (String endpoint : rateLimit.keySet()) {
               RateLimitStatus status = rateLimit.get(endpoint);
               //Omit any endpoints that haven't moved from default limit
               if (status.getRemaining() != status.getLimit()) {
+                //TODO Switch these off after testing
                 getLogger().info("[DEBUG] Endpoint: " + endpoint);
                 getLogger().info("[DEBUG] Limit: " + status.getLimit());
                 getLogger().info("[DEBUG] Remaining: " + status.getRemaining());
@@ -564,7 +561,6 @@ public class Main extends JavaPlugin implements Listener {
     }
   }
   
-  //TODO Test this
   private String[] getCurrentStatus (Twitter twitter) throws TwitterException {
     // Gets last user tweet from timeline.
     ResponseList<Status> userTimeLine = twitter.getUserTimeline();
